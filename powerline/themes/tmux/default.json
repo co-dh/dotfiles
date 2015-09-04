@@ -1,0 +1,24 @@
+{
+	"segments": {
+		"right": [
+                        {
+                                "function": "powerline.segments.common.vcs.branch",
+                                 "priority": 40
+                        },
+                        {
+                                "function": "powerline.segments.common.sys.cpu_load_percent"
+                        },
+			{
+				"function": "powerline.segments.common.time.date",
+				"name": "time",
+				"args": {
+					"format": "%d  %H:%M",
+					"istime": true
+				}
+			},
+			{
+				"function": "powerline.segments.common.net.hostname"
+			}
+		]
+	}
+}
