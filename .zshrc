@@ -107,8 +107,12 @@ bindkey "^f" end-of-line
 bindkey -s '^z' 'fg^M'
 
 . ~/.local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
+export PYTHONPATH=.
+export CONFIG=~/adcp.json
+export TERM=xterm-256color
 
-
+# disable ctrl s that freeze the terminal
+stty -ixon
 
 
 
