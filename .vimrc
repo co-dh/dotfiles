@@ -85,6 +85,8 @@ nnoremap <Leader>c :w<CR>:SyntasticCheck<CR>
 
 hi Folded ctermbg=black
 set nonumber
-so ~/.vimrc_sec
+if filereadable("~/.vimrc_sec")
+    so ~/.vimrc_sec
+endif
 
 
