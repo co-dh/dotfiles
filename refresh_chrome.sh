@@ -1,8 +1,6 @@
 #!/bin/sh
-set -e
+#set -e
 export DISPLAY=:0
-focused_window=$(xdotool getwindowfocus)
-
-xdotool search --onlyvisible --classname google-chrome windowfocus && sleep 0.2 && xdotool key "ctrl+r"
-
-xdotool windowfocus $focused_window
+#focused_window=$(xdotool getwindowfocus)
+xdotool search --name 'Hello React!' windowactivate xdotool key super+r
+#xdotool windowactivate $focused_window
