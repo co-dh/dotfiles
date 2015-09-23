@@ -25,18 +25,18 @@ NeoBundle 'easymotion/vim-easymotion'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'vim-scripts/dbext.vim'
 NeoBundle 'Valloric/YouCompleteMe'
-NeoBundle 'scrooloose/syntastic'
+"NeoBundle 'scrooloose/syntastic'
 NeoBundle 'tomasr/molokai'
 "NeoBundle 'klen/python-mode'
 NeoBundle 'will133/vim-dirdiff'
+"
 NeoBundle 'tmhedberg/SimpylFold'
 NeoBundle 'Shougo/vimproc.vim', {'build' : {'linux' : 'make'}}
 NeoBundle 'Quramy/tsuquyomi'
-NeoBundle 'leafgarland/typescript-vim'
+"NeoBundle 'leafgarland/typescript-vim'
+"
 NeoBundle 'pangloss/vim-javascript'
-NeoBundle 'mxw/vim-jsx'
-"NeoBundle 'garbas/vim-snipmate'
-"NeoBundle 'justinj/vim-react-snippets'
+"NeoBundle 'mxw/vim-jsx'
 
 
 " You can specify revision/branch/tag.
@@ -56,7 +56,7 @@ NeoBundleCheck
 
 au FocusLost * :wa
 set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
 
@@ -127,8 +127,6 @@ endif
 
 let g:netrw_list_hide= '.*\.pyc$'
 
-so ~/.vimrc_sec
-
 let g:tsuquyomi_use_dev_node_module = 2
 let g:tsuquyomi_tsserver_path    = '/home/hao/node41/bin/tsserver'
-let g:typescript_compiler_binary = '/home/hao/node41/bin/tsc'
+"let g:typescript_compiler_binary = '/home/hao/node41/bin/tsc'

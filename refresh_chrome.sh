@@ -1,6 +1,6 @@
 #!/bin/sh
 #set -e
-export DISPLAY=:0
-#focused_window=$(xdotool getwindowfocus)
-xdotool search --name 'Hello React!' windowactivate xdotool key super+r
-#xdotool windowactivate $focused_window
+focused_window=$(xdotool getwindowfocus)
+xdotool windowfocus `cat ~/selectwindow`
+xdotool key --window `cat ~/selectwindow` F5
+xdotool windowfocus $focused_window
