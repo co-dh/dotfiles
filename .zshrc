@@ -98,7 +98,7 @@ zle-line-init() {
 zle -N zle-line-init
 
 mkdir -p $HOME/local/bin
-PATH="$HOME/local/bin:$PATH"
+#PATH="$HOME/local/bin:$PATH"
 mkdir -p $HOME/local/lib
 export LD_LIBRARY_PATH="$HOME/local/lib:$LD_LIBRARY_PATH"
 export PKG_CONFIG_PATH="$HOME/local/lib/pkgconfig/:$HOME/local/lib/pkg-config/"
@@ -107,7 +107,7 @@ bindkey "^f" end-of-line
 bindkey -s '^z' 'fg^M'
 
 . ~/.local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
-export PYTHONPATH=.
+#export PYTHONPATH=.
 export CONFIG=~/adcp.json
 export TERM=xterm-256color
 
