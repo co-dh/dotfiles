@@ -31,8 +31,12 @@ NeoBundle 'junegunn/vim-easy-align'
 NeoBundle 'easymotion/vim-easymotion'
 NeoBundle 'vim-scripts/dbext.vim'
 NeoBundle 'will133/vim-dirdiff'
+"
 NeoBundle 'tmhedberg/SimpylFold'
 NeoBundle 'leafgarland/typescript-vim'
+NeoBundle 'Shougo/vimproc.vim', {'build' : {'linux' : 'make'}}
+NeoBundle 'Quramy/tsuquyomi'
+"
 
 NeoBundle 'kchmck/vim-coffee-script'
 
@@ -69,7 +73,7 @@ au FocusLost * :wa
 au BufWritePre *.py,*.tsx :%s/\s\+$//e
 
 set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
 
@@ -143,10 +147,11 @@ let g:syntastic_python_checkers = ['pylint']
 let g:syntastic_typescript_checkers = [''] "slow, use Tsu
 
 set nonumber
+if filereadable("~/.vimrc_sec")
+    so ~/.vimrc_sec
+endif
 
 let g:netrw_list_hide= '.*\.pyc$'
-
-so ~/.vimrc_sec
 
 let g:tsuquyomi_use_dev_node_module = 2
 let g:tsuquyomi_tsserver_path = '/home/hao/node41/bin/tsserver'
