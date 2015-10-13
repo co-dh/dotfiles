@@ -20,32 +20,32 @@ NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'Shougo/vimproc.vim', {'build' : {'linux' : 'make'}}
 NeoBundle 'Quramy/tsuquyomi'
 NeoBundle 'bling/vim-airline'
-"NeoBundle 'tomasr/molokai'
+NeoBundle 'tomasr/molokai'
 
-"NeoBundle 'tpope/vim-unimpaired'
-"NeoBundle 'ctrlpvim/ctrlp.vim'
-"NeoBundle 'christoomey/vim-tmux-navigator'
+NeoBundle 'tpope/vim-unimpaired'
+NeoBundle 'ctrlpvim/ctrlp.vim'
+NeoBundle 'christoomey/vim-tmux-navigator'
 
-"NeoBundle 'jiangmiao/auto-pairs'
-"NeoBundle 'junegunn/vim-easy-align'
-"NeoBundle 'easymotion/vim-easymotion'
-"NeoBundle 'vim-scripts/dbext.vim'
-"NeoBundle 'will133/vim-dirdiff'
-"NeoBundle 'tmhedberg/SimpylFold'
-"NeoBundle 'leafgarland/typescript-vim'
-"NeoBundle 'pangloss/vim-javascript'
-"NeoBundle 'mxw/vim-jsx'
+NeoBundle 'jiangmiao/auto-pairs'
+NeoBundle 'junegunn/vim-easy-align'
+NeoBundle 'easymotion/vim-easymotion'
+NeoBundle 'vim-scripts/dbext.vim'
+NeoBundle 'will133/vim-dirdiff'
+NeoBundle 'tmhedberg/SimpylFold'
+NeoBundle 'leafgarland/typescript-vim'
 
-"NeoBundle 'kchmck/vim-coffee-script'
+NeoBundle 'kchmck/vim-coffee-script'
 
-"NeoBundle 'scrooloose/syntastic'
+NeoBundle 'scrooloose/syntastic'
 
-"NeoBundle 'tmux-plugins/vim-tmux-focus-events'
-"NeoBundle 'blueyed/vim-diminactive'
-"NeoBundle 'davidoc/taskpaper.vim'
-"NeoBundle 'mattn/emmet-vim'
+NeoBundle 'tmux-plugins/vim-tmux-focus-events'
+NeoBundle 'blueyed/vim-diminactive'
+NeoBundle 'davidoc/taskpaper.vim'
 
 " disabled because of slow or other reason
+NeoBundle 'mattn/emmet-vim'
+"NeoBundle 'pangloss/vim-javascript'
+"NeoBundle 'mxw/vim-jsx'
 "NeoBundle 'Valloric/YouCompleteMe'
 "NeoBundle 'garbas/vim-snipmate'
 "NeoBundle 'justinj/vim-react-snippets'
@@ -109,12 +109,14 @@ nnoremap <Leader>w :w<CR>
 nnoremap <Leader>p :CtrlPMRU<CR> 
 nnoremap <Leader>g :Ggrep -w <C-r><C-w><CR>
 nnoremap <Leader>d :bd<CR>
-nnoremap <Leader>m :silent make\|redraw!\|cc<CR>
+"nnoremap <Leader>m :silent make\|redraw!\|cc<CR>
 nnoremap <Leader>t :w<CR>:TsuReload<CR>:TsuGeterr<CR>
-nnoremap <Leader>c :checktime<CR>
+"nnoremap <Leader>c :checktime<CR>
+"nnoremap <Leader>r :echo system('touch /home/hao/rtbopt/uwsgi.reload')<CR> 
+nnoremap <Leader>s :w<CR>:SyntasticCheck<CR>
 
-nmap <Leader>; <Plug>(easymotion-next)
-nmap <Leader>, <Plug>(easymotion-prev)
+"nmap <Leader>; <Plug>(easymotion-next)
+"nmap <Leader>, <Plug>(easymotion-prev)
 
 set laststatus=2
 
@@ -139,7 +141,6 @@ let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
 let g:syntastic_python_checkers = ['pylint']
 let g:syntastic_typescript_checkers = [''] "slow, use Tsu
-nnoremap <Leader>s :w<CR>:SyntasticCheck<CR>
 
 set nonumber
 
