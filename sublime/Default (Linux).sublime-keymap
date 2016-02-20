@@ -1,0 +1,13 @@
+[ { "keys": ["f2"], "command": "semantic" }
+ ,{ "keys": ["j", "j"], "context": [{"key": "vi_insert_mode_aware"}], "command": "_enter_normal_mode", "args": { "mode": "mode_insert" } }
+ ,{ "keys": [" ", "d"], "context": [{"key": "vi_command_mode_aware"}], "command": "save"}
+ ,{ "keys": [" ", "k"], "context": [{"key": "vi_command_mode_aware"}], "command": "close"}
+ ,{ "keys": [" ", "q"], "context": [{"key": "vi_command_mode_aware"}], "command": "close_window"}
+ ,{ "keys": [" ", "p"], "context": [{"key": "vi_command_mode_aware"}], "command": "show_overlay", "args":{"overlay": "goto", "show_files": true}}
+ ,{ "keys": [" ", "t", "r"], "context": [{"key": "vi_command_mode_aware"}], "command": "toggle_setting", "args":{"setting": "vintage_lines.force_mode"}}
+ ,{ "keys": [" ", "t", "n"], "context": [{"key": "vi_command_mode_aware"}], "command": "toggle_setting", "args":{"setting": "line_numbers"}}
+ ,{ "keys": [" ", "t", "s"], "context": [{"key": "vi_command_mode_aware"}], "command": "toggle_side_bar"}
+ ,{ "keys": [" ", "t", "p"], "context": [{"key": "vi_command_mode_aware"}], "command": "toggle_minimap"}
+ ,{ "keys": [" ", "t", "t"], "context": [{"key": "vi_command_mode_aware"}], "command": "toggle_tabs"}
+ ,{ "keys": [" ", "t", "m"], "context": [{"key": "vi_command_mode_aware"}], "command": "toggle_menu"}
+]

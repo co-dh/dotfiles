@@ -31,7 +31,7 @@ from libqtile import layout, bar, widget
 mod = "mod4"
 
 import logging
-log_level = logging.INFO 
+log_level = logging.INFO
 log_path = '~/qtile.log'
 
 keys = [
@@ -69,7 +69,7 @@ keys = [
         [mod, "shift"], "Return",
         lazy.layout.toggle_split()
     ),
-    Key([mod], "Return", lazy.spawn("st")),
+    Key([mod], "Return", lazy.spawn("gnome-terminal")),
     Key([mod], "r", lazy.spawn("~/dotfiles/refresh_chrome.sh")),
 
     # Toggle between different layouts as defined below
@@ -121,6 +121,20 @@ screens = [
             30,
         ),
     ),
+    #Screen(
+    #    bottom=bar.Bar(
+    #        [
+    #            widget.GroupBox(),
+    #            widget.Prompt(),
+    #            widget.WindowName(),
+    #            widget.TextBox("dh config", name="default"),
+    #            widget.Systray(),
+    #            widget.Clock(format='%Y-%m-%d %a %I:%M %p'),
+    #            widget.CurrentLayout(),
+    #        ],
+    #        30,
+    #    ),
+    #),
 ]
 
 # Drag floating layouts.

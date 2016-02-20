@@ -49,7 +49,7 @@ ZSH_THEME="fishy"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=()
 
 # User configuration
 
@@ -105,14 +105,14 @@ export PKG_CONFIG_PATH="$HOME/local/lib/pkgconfig/:$HOME/local/lib/pkg-config/"
 bindkey "^f" end-of-line
 bindkey -s '^z' 'fg^M'
 
-. ~/.local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
+#. ~/.local/lib/python2.7/site-packages/powerline/bindings/zsh/powerline.zsh
 #export PYTHONPATH=.
 export CONFIG=~/adcp.json
 export TERM=xterm-256color
 
 # disable ctrl s that freeze the terminal
 stty -ixon
-
+. $HOME/.config/z.sh
 
 
 

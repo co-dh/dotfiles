@@ -36,7 +36,6 @@ NeoBundle 'tmhedberg/SimpylFold'
 NeoBundle 'leafgarland/typescript-vim'
 NeoBundle 'Shougo/vimproc.vim', {'build' : {'linux' : 'make'}}
 NeoBundle 'Quramy/tsuquyomi'
-"
 
 NeoBundle 'kchmck/vim-coffee-script'
 
