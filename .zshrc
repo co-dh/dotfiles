@@ -109,10 +109,14 @@ bindkey -s '^z' 'fg^M'
 #export PYTHONPATH=.
 export CONFIG=~/adcp.json
 export TERM=xterm-256color
+alias gst='git status'
+alias gdf='git diff'
+alias gdt='git difftool'
+alias ga='git add'
 
 # disable ctrl s that freeze the terminal
 stty -ixon
-. $HOME/.config/z.sh
+. ./z.sh
 
 
 
