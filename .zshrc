@@ -113,6 +113,9 @@ alias gst='git status'
 alias gdf='git diff'
 alias gdt='git difftool'
 alias ga='git add'
+alias gcam='git commit -am'
+alias gps='git push'
+alias gpl='git pull'
 
 # disable ctrl s that freeze the terminal
 stty -ixon
