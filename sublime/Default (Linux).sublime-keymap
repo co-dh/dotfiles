@@ -1,13 +1,19 @@
 [ { "keys": ["f2"], "command": "semantic" }
- ,{ "keys": ["j", "j"], "context": [{"key": "vi_insert_mode_aware"}], "command": "_enter_normal_mode", "args": { "mode": "mode_insert" } }
- ,{ "keys": [" ", "d"], "context": [{"key": "vi_command_mode_aware"}], "command": "save"}
- ,{ "keys": [" ", "k"], "context": [{"key": "vi_command_mode_aware"}], "command": "close"}
- ,{ "keys": [" ", "q"], "context": [{"key": "vi_command_mode_aware"}], "command": "close_window"}
- ,{ "keys": [" ", "b"], "context": [{"key": "vi_command_mode_aware"}], "command": "show_overlay", "args":{"overlay": "goto", "show_files": true}}
- ,{ "keys": [" ", "t", "r"], "context": [{"key": "vi_command_mode_aware"}], "command": "toggle_setting", "args":{"setting": "vintage_lines.force_mode"}}
- ,{ "keys": [" ", "t", "n"], "context": [{"key": "vi_command_mode_aware"}], "command": "toggle_setting", "args":{"setting": "line_numbers"}}
- ,{ "keys": [" ", "t", "s"], "context": [{"key": "vi_command_mode_aware"}], "command": "toggle_side_bar"}
- ,{ "keys": [" ", "t", "p"], "context": [{"key": "vi_command_mode_aware"}], "command": "toggle_minimap"}
- ,{ "keys": [" ", "t", "t"], "context": [{"key": "vi_command_mode_aware"}], "command": "toggle_tabs"}
- ,{ "keys": [" ", "t", "m"], "context": [{"key": "vi_command_mode_aware"}], "command": "toggle_menu"}
+
+ ,{ "keys": [" ", "t", "n"], "context": [{"key": "setting.command_mode"}], "command": "toggle_setting", "args":{"setting": "line_numbers"}}
+ ,{ "keys": [" ", "t", "s"], "context": [{"key": "setting.command_mode"}], "command": "toggle_side_bar"}
+ ,{ "keys": [" ", "t", "p"], "context": [{"key": "setting.command_mode"}], "command": "toggle_minimap"}
+ ,{ "keys": [" ", "t", "t"], "context": [{"key": "setting.command_mode"}], "command": "toggle_tabs"}
+ ,{ "keys": [" ", "t", "m"], "context": [{"key": "setting.command_mode"}], "command": "toggle_menu"}
+ ,{ "keys": ["j", "j"], "command": "exit_insert_mode", "context": [{ "key": "setting.command_mode", "operand": false } ,{ "key": "setting.is_widget", "operand": false }] }
+ ,{ "keys": [" ", "d"], "command": "save", "context": [{ "key": "setting.command_mode"}]}
+ ,{ "keys": [" ", "c"], "command": "build", "context": [{ "key": "setting.command_mode"}]}
+ ,{ "keys": [" ", "k"], "command": "close", "context": [{ "key": "setting.command_mode"}]}
+ ,{ "keys": [" ", "q"], "command": "close_window", "context": [{ "key": "setting.command_mode"}]}
+ ,{ "keys": [" ", "b"], "command": "show_overlay", "context": [{ "key": "setting.command_mode"}], "args":{"overlay": "goto", "show_files": true}}
+ ,{ "keys": ["[", "l"], "context": [{"key": "setting.command_mode"}], "command": "sublimelinter_goto_error", 
+    "args" :{"direction": "previous"} }
+ ,{ "keys": ["]", "l"], "context": [{"key": "setting.command_mode"}], "command": "sublimelinter_goto_error", 
+    "args":{"direction": "next"} }
+ ,{ "keys": [" ", "e"], "command": "sublimelinter_show_all_errors", "context": [{ "key": "setting.command_mode"}]}
 ]

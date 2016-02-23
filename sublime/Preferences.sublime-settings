@@ -9,15 +9,18 @@
 		".idea",
 		"node_modules"
 	],
+	"font_size": 10,
+	"highlight_line": true,
 	"ignored_packages":
 	[
-		"Vintage"
 	],
 	"line_numbers": false,
 	"overlay_scroll_bars": "enabled",
 	"trailing_spaces_trim_on_save": true,
 	"translate_tabs_to_spaces": true,
 	"typescript_plugin_tsc_version": "1.7.3",
-	"vintage_lines.force_mode": true,
-	"vintageous_use_ctrl_keys": true
+	"vintage_ctrl_keys": true,
+	"vintage_start_in_command_mode": true,
+	"vintageous_use_ctrl_keys": true,
+	"vintageous_verbose": true
 }
