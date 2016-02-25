@@ -13,7 +13,7 @@ bindkey -s '^z' 'fg^M'
 
 # disable ctrl s that freeze the terminal
 stty -ixon
-. $HOME/dotfiles/z.sh
+#. $HOME/dotfiles/z.sh
 
 
 

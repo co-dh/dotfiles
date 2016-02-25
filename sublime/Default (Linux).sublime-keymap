@@ -16,4 +16,13 @@
  ,{ "keys": ["]", "l"], "context": [{"key": "setting.command_mode"}], "command": "sublimelinter_goto_error", 
     "args":{"direction": "next"} }
  ,{ "keys": [" ", "e"], "command": "sublimelinter_show_all_errors", "context": [{ "key": "setting.command_mode"}]}
+ ,{ "keys": ["ctrl+o"], "command": "jump_back"}
+ ,{ "keys": ["ctrl+i"], "command": "jump_forward"}
+ ,{ "keys": [" ", "o"], "command": "prompt_open_file", "context": [{"key": "setting.command_mode"}]}
+
+ ,{ "keys": ["ctrl+n"], "command": "move", "context":[{"key": "setting.is_widget"}], "args": {"by": "lines", "forward": true}}
+ ,{ "keys": ["ctrl+p"], "command": "move", "context":[{"key": "setting.is_widget"}], "args": {"by": "lines", "forward": false}}
+ 
+ ,{"keys": [" ", "r"], "command": "toggle_setting", "args": {"setting": "vintage_lines.force_mode"}, "context": [{"key": "setting.command_mode"}]}
+ ,{"keys": [" ", "t", "l"], "command": "toggle_setting", "args": {"setting": "line_numbers"}}
 ]
