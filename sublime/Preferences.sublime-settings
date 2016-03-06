@@ -1,7 +1,7 @@
 {
 	"caret_extra_width": 3,
 	"caret_style": "smooth",
-	"color_scheme": "Packages/User/SublimeLinter/Solarized (Light) (SL).tmTheme",
+	"color_scheme": "Packages/User/SublimeLinter/Solarized (Dark) (SL).tmTheme",
 	"folder_exclude_patterns":
 	[
 		".svn",
@@ -10,7 +10,8 @@
 		"CVS",
 		".idea",
 		"node_modules",
-		"virtualenv"
+		"virtualenv",
+		"__pycache__"
 	],
 	"font_size": 10,
 	"highlight_line": true,
@@ -20,11 +21,9 @@
 	"line_numbers": false,
 	"overlay_scroll_bars": "enabled",
 	"save_on_focus_lost": true,
-	"trailing_spaces_trim_on_save": true,
 	"translate_tabs_to_spaces": true,
-	"typescript_plugin_tsc_version": "1.7.3",
+	"trim_trailing_white_space_on_save": true,
 	"vintage_ctrl_keys": true,
 	"vintage_start_in_command_mode": true,
-	"vintageous_use_ctrl_keys": true,
-	"vintageous_verbose": true
+	"vintageous_use_ctrl_keys": true
 }

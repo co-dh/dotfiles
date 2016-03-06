@@ -10,19 +10,22 @@
  ,{ "keys": [" ", "c"], "command": "build", "context": [{ "key": "setting.command_mode"}]}
  ,{ "keys": [" ", "k"], "command": "close", "context": [{ "key": "setting.command_mode"}]}
  ,{ "keys": [" ", "q"], "command": "close_window", "context": [{ "key": "setting.command_mode"}]}
+ ,{ "keys": [" ", "a"], "command": "align_tab", "context": [{ "key": "setting.command_mode"}]}
  ,{ "keys": [" ", "b"], "command": "show_overlay", "context": [{ "key": "setting.command_mode"}], "args":{"overlay": "goto", "show_files": true}}
- ,{ "keys": ["[", "l"], "context": [{"key": "setting.command_mode"}], "command": "sublimelinter_goto_error", 
+ ,{ "keys": ["[", "l"], "context": [{"key": "setting.command_mode"}], "command": "sublimelinter_goto_error",
     "args" :{"direction": "previous"} }
- ,{ "keys": ["]", "l"], "context": [{"key": "setting.command_mode"}], "command": "sublimelinter_goto_error", 
+ ,{ "keys": ["]", "l"], "context": [{"key": "setting.command_mode"}], "command": "sublimelinter_goto_error",
     "args":{"direction": "next"} }
  ,{ "keys": [" ", "e"], "command": "sublimelinter_show_all_errors", "context": [{ "key": "setting.command_mode"}]}
+ ,{ "keys": [" ", "p"], "command": "typescript_go_to_error", "context": [{ "key": "setting.command_mode"}]}
  ,{ "keys": ["ctrl+o"], "command": "jump_back"}
  ,{ "keys": ["ctrl+i"], "command": "jump_forward"}
  ,{ "keys": [" ", "o"], "command": "prompt_open_file", "context": [{"key": "setting.command_mode"}]}
 
  ,{ "keys": ["ctrl+n"], "command": "move", "context":[{"key": "setting.is_widget"}], "args": {"by": "lines", "forward": true}}
  ,{ "keys": ["ctrl+p"], "command": "move", "context":[{"key": "setting.is_widget"}], "args": {"by": "lines", "forward": false}}
- 
+
  ,{"keys": [" ", "r"], "command": "toggle_setting", "args": {"setting": "vintage_lines.force_mode"}, "context": [{"key": "setting.command_mode"}]}
  ,{"keys": [" ", "t", "l"], "command": "toggle_setting", "args": {"setting": "line_numbers"}}
-]
+ ,{ "keys": ["j", "j"], "command": "_enter_normal_mode", "args": { "mode": "mode_insert" }, "context": [{"key": "vi_insert_mode_aware"}] }
+ ]
