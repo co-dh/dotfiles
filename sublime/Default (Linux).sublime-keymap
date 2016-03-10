@@ -27,5 +27,10 @@
 
  ,{"keys": [" ", "r"], "command": "toggle_setting", "args": {"setting": "vintage_lines.force_mode"}, "context": [{"key": "setting.command_mode"}]}
  ,{"keys": [" ", "t", "l"], "command": "toggle_setting", "args": {"setting": "line_numbers"}}
- ,{ "keys": ["j", "j"], "command": "_enter_normal_mode", "args": { "mode": "mode_insert" }, "context": [{"key": "vi_insert_mode_aware"}] }
+ ,{ "keys": [" ", "2"], "context": [{"key": "setting.command_mode"}],
+    "command": "set_layout",
+    "args": {"cells": [[0, 0, 1, 1], [1, 0, 2, 1]], "cols": [0.0, 0.5, 1.0], "rows": [0.0, 1.0]}}
+ ,{ "keys": [" ", "1"], "context": [{"key": "setting.command_mode"}],
+    "command": "set_layout",
+    "args": {"cells": [[0, 0, 1, 1]], "cols": [0.0, 1.0], "rows": [0.0, 1.0]} }
  ]
