@@ -5,13 +5,17 @@
  ,{ "keys": [" ", "t", "p"], "context": [{"key": "setting.command_mode"}], "command": "toggle_minimap"}
  ,{ "keys": [" ", "t", "t"], "context": [{"key": "setting.command_mode"}], "command": "toggle_tabs"}
  ,{ "keys": [" ", "t", "m"], "context": [{"key": "setting.command_mode"}], "command": "toggle_menu"}
+
  ,{ "keys": ["j", "j"], "command": "exit_insert_mode", "context": [{ "key": "setting.command_mode", "operand": false } ,{ "key": "setting.is_widget", "operand": false }] }
- ,{ "keys": [" ", "d"], "command": "save", "context": [{ "key": "setting.command_mode"}]}
- ,{ "keys": [" ", "c"], "command": "build", "context": [{ "key": "setting.command_mode"}]}
- ,{ "keys": [" ", "k"], "command": "close", "context": [{ "key": "setting.command_mode"}]}
- ,{ "keys": [" ", "q"], "command": "close_window", "context": [{ "key": "setting.command_mode"}]}
+
  ,{ "keys": [" ", "a"], "command": "align_tab", "context": [{ "key": "setting.command_mode"}]}
  ,{ "keys": [" ", "b"], "command": "show_overlay", "context": [{ "key": "setting.command_mode"}], "args":{"overlay": "goto", "show_files": true}}
+ ,{ "keys": [" ", "c"], "command": "build", "context": [{ "key": "setting.command_mode"}]}
+ ,{ "keys": [" ", "d"], "command": "save", "context": [{ "key": "setting.command_mode"}]}
+ ,{ "keys": [" ", "k"], "command": "close", "context": [{ "key": "setting.command_mode"}]}
+ ,{ "keys": [" ", "n"], "command": "new_file", "context": [{ "key": "setting.command_mode"}]}
+ ,{ "keys": [" ", "q"], "command": "close_window", "context": [{ "key": "setting.command_mode"}]}
+
  ,{ "keys": ["[", "l"], "context": [{"key": "setting.command_mode"}], "command": "sublimelinter_goto_error",
     "args" :{"direction": "previous"} }
  ,{ "keys": ["]", "l"], "context": [{"key": "setting.command_mode"}], "command": "sublimelinter_goto_error",
