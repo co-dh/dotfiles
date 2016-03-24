@@ -5,3 +5,6 @@ alias gst "git status"
 alias gd "git difftool"
 alias gc "git commit -am"
 alias gb "git branch"
+alias gp "git pull"
+alias g git
+alias t task
