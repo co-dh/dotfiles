@@ -2,6 +2,30 @@
 	"caret_extra_width": 3,
 	"caret_style": "smooth",
 	"color_scheme": "Packages/User/SublimeLinter/Solarized (Light) (SL).tmTheme",
+	"file_exclude_patterns":
+	[
+		"*.pyc",
+		"*.pyo",
+		"*.exe",
+		"*.dll",
+		"*.obj",
+		"*.o",
+		"*.a",
+		"*.lib",
+		"*.so",
+		"*.dylib",
+		"*.ncb",
+		"*.sdf",
+		"*.suo",
+		"*.pdb",
+		"*.idb",
+		".DS_Store",
+		"*.class",
+		"*.psd",
+		"*.db",
+		"*.sublime-workspace",
+		"*.map"
+	],
 	"folder_exclude_patterns":
 	[
 		".svn",
@@ -11,9 +35,7 @@
 		".idea",
 		"node_modules",
 		"virtualenv",
-		"__pycache__",
-		"build",
-		"tmp"
+		"__pycache__"
 	],
 	"font_size": 10,
 	"highlight_line": true,
@@ -22,7 +44,7 @@
 	],
 	"line_numbers": false,
 	"overlay_scroll_bars": "enabled",
-	"save_on_focus_lost": true,
+	"save_on_focus_lost": false,
 	"translate_tabs_to_spaces": true,
 	"trim_trailing_white_space_on_save": true,
 	"vintage_ctrl_keys": true,

@@ -1,3 +1,4 @@
+set shell=/bin/bash
 "NeoBundle Scripts-----------------------------
 if has('vim_starting')
   if &compatible
@@ -107,15 +108,15 @@ au BufEnter * setlocal cursorline
 au BufLeave * setlocal nocursorline
 
 let mapleader = "\<Space>"
-nnoremap <Leader>x :bp\|bd #<CR> 
-nnoremap <Leader>w :w<CR> 
-nnoremap <Leader>p :CtrlPMRU<CR> 
+nnoremap <Leader>x :bp\|bd #<CR>
+nnoremap <Leader>w :w<CR>
+nnoremap <Leader>p :CtrlPMRU<CR>
 nnoremap <Leader>g :Ggrep -w <C-r><C-w><CR>
 nnoremap <Leader>d :bd<CR>
 "nnoremap <Leader>m :silent make\|redraw!\|cc<CR>
 nnoremap <Leader>t :w<CR>:TsuReload<CR>:TsuGeterr<CR>
 "nnoremap <Leader>c :checktime<CR>
-"nnoremap <Leader>r :echo system('touch /home/hao/rtbopt/uwsgi.reload')<CR> 
+"nnoremap <Leader>r :echo system('touch /home/hao/rtbopt/uwsgi.reload')<CR>
 nnoremap <Leader>s :w<CR>:SyntasticCheck<CR>
 
 "nmap <Leader>; <Plug>(easymotion-next)
@@ -157,5 +158,5 @@ let g:tsuquyomi_tsserver_path = '/home/hao/node41/bin/tsserver'
 "let g:typescript_compiler_binary = '/home/hao/node41/bin/tsc'
 "let g:typescript_compiler_options = '--jsx react'
 "
-hi CursorLine term=underline ctermbg=4 guibg=#293739 
+hi CursorLine term=underline ctermbg=4 guibg=#293739
 "autocmd BufNewFile,BufRead *.ts,*.tsx setlocal filetype=typescript
