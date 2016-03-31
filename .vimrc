@@ -30,7 +30,7 @@ NeoBundle 'christoomey/vim-tmux-navigator'
 NeoBundle 'jiangmiao/auto-pairs'
 NeoBundle 'junegunn/vim-easy-align'
 NeoBundle 'easymotion/vim-easymotion'
-NeoBundle 'vim-scripts/dbext.vim'
+" NeoBundle 'vim-scripts/dbext.vim'
 NeoBundle 'will133/vim-dirdiff'
 "
 NeoBundle 'tmhedberg/SimpylFold'
@@ -40,7 +40,7 @@ NeoBundle 'Quramy/tsuquyomi'
 
 NeoBundle 'kchmck/vim-coffee-script'
 
-NeoBundle 'scrooloose/syntastic'
+" NeoBundle 'scrooloose/syntastic'
 
 NeoBundle 'tmux-plugins/vim-tmux-focus-events'
 NeoBundle 'blueyed/vim-diminactive'
