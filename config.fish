@@ -9,3 +9,4 @@ alias gb "git branch"
 alias gp "git pull"
 alias g git
 alias t task
+set -x VISUAL 'subl -w -n'
