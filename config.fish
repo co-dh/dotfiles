@@ -7,4 +7,4 @@ alias gd "git difftool"
 alias gc "git commit -am"
 alias gb "git branch"
 alias gp "git pull"
-set -x VISUAL 'subl -w'
+set -x VISUAL 'subl -w -n'

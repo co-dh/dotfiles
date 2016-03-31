@@ -35,9 +35,7 @@
 		"CVS",
 		".idea",
 		"virtualenv",
-		"__pycache__",
-		"build",
-		"tmp"
+		"__pycache__"
 	],
 	"font_size": 10,
 	"highlight_line": true,
