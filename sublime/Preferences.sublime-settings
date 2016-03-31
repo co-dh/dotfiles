@@ -2,6 +2,7 @@
 	"caret_extra_width": 3,
 	"caret_style": "smooth",
 	"color_scheme": "Packages/User/SublimeLinter/Solarized (Light) (SL).tmTheme",
+    "hot_exit": false,
 	"file_exclude_patterns":
 	[
 		"*.pyc",
@@ -33,7 +34,6 @@
 		".hg",
 		"CVS",
 		".idea",
-		"node_modules",
 		"virtualenv",
 		"__pycache__",
 		"build",
