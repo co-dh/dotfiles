@@ -15,6 +15,7 @@
  ,{ "keys": [" ", "k"], "command": "close", "context": [{ "key": "setting.command_mode"}]}
  ,{ "keys": [" ", "n"], "command": "new_file", "context": [{ "key": "setting.command_mode"}]}
  ,{ "keys": [" ", "q"], "command": "close_window", "context": [{ "key": "setting.command_mode"}]}
+ ,{ "keys": ["ctrl+9"], "command": "show_panel", "args":{"panel": "output.exec"}}
 
  ,{ "keys": ["[", "l"], "context": [{"key": "setting.command_mode"}], "command": "sublimelinter_goto_error",
     "args" :{"direction": "previous"} }
@@ -34,6 +35,10 @@
  ,{ "keys": [" ", "2"], "context": [{"key": "setting.command_mode"}],
     "command": "set_layout",
     "args": {"cells": [[0, 0, 1, 1], [1, 0, 2, 1]], "cols": [0.0, 0.5, 1.0], "rows": [0.0, 1.0]}}
+ ,{ "keys": [" ", "4"], "context": [{"key": "setting.command_mode"}],
+    "command": "set_layout",
+    "args": {"cells": [[0, 0, 1, 1], [1, 0, 2, 1], [0, 1, 1, 2], [1, 1, 2, 2]], "cols": [0.0, 0.5, 1.0], "rows": [0.0, 0.5, 1.0]}
+}
  ,{ "keys": [" ", "1"], "context": [{"key": "setting.command_mode"}],
     "command": "set_layout",
     "args": {"cells": [[0, 0, 1, 1]], "cols": [0.0, 1.0], "rows": [0.0, 1.0]} }

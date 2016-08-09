@@ -1,0 +1,1 @@
+/home/hao/.config/nvim/init.vim
