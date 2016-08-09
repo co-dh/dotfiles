@@ -8,7 +8,8 @@ alias gc "git commit -am"
 alias gb "git branch"
 alias gp "git pull"
 alias nv nvim
-set -x VISUAL 'subl -w -n'
+alias g git
+alias t task
 set -x GOPATH ~/gohome
 set -x PATH $PATH /usr/local/go/bin/ $GOPATH/bin
 

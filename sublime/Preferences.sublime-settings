@@ -39,6 +39,7 @@
 	],
 	"font_size": 10,
 	"highlight_line": true,
+    "hot_exit": false,
 	"ignored_packages":
 	[
 	],
