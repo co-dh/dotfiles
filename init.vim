@@ -52,7 +52,6 @@ color dracula
 
 "let g:semanticEnableFileTypes = ['python', 'vim']
 
-let g:dbext_default_profile_adgear_ro = 'type=PGSQL:integratedlogin=1:user=readonly:dbname=rtbopt:host=rtbopt-adgear.cja5vw8btxcx.us-east-1.rds.amazonaws.com'
 
 au FileType go nmap <leader>r <Plug>(go-run)
 
