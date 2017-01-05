@@ -22,9 +22,7 @@
 
 (defun qq (string)
   (message (concat "qq[" string "]"))
-  (replace-regexp-in-string "\n" " " 
-			    (org-babel-execute:q string nil)))
-
+  (replace-regexp-in-string "\n" " " (org-babel-execute:q string nil)))
 
 (defun imm-step (row-number q-func-as-string)
   (concat "x" (number-to-string row-number)
@@ -40,3 +38,5 @@
 
 (defun step (row-number q-func-as-string)
     (concat "x: 0N! " q-func-as-string " x"))
+
+(provide 'ob-q)
