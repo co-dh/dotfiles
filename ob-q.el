@@ -3,6 +3,7 @@
 ;; Keywords: kdb+, q, literate programming, reproducible research
 
 (defun ob-q-filter (proc string)
+  (message string)
   (setq ob-q-output (concat ob-q-output string)))
 
 (defun ob-q-init ()
@@ -38,6 +39,22 @@
   (concat name " 0N! {"
 	  (mapconcat 'identity (nreverse a) " ")
 	  " x}")) 
-  
 
+;; each function every 2 step
+(defun step2 (row-number this-cell above x)
+  (if (= 0 (mod row-number 2))
+      this-cell
+    (concat "=>" (qq (concat "x: 0N! " above 
+			(if (= 3 row-number) x " x"))))))
+
+(defun take-every-other (lst)
+  (if (= nil lst)
+      nil
+    (cons (car lst) (take-every-other (cddr lst)))))
+
+;; collect function every two row.
+(defun qf2 (name &rest a)
+  (concat name " 0N! {"
+	  (mapconcat 'identity (nreverse a) " ")
+	  " x}")) 
 (provide 'ob-q)
