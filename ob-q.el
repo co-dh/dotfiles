@@ -48,13 +48,14 @@
 			(if (= 3 row-number) x " x"))))))
 
 (defun take-every-other (lst)
-  (if (= nil lst)
+  (if (null lst)
       nil
     (cons (car lst) (take-every-other (cddr lst)))))
+
 
 ;; collect function every two row.
 (defun qf2 (name &rest a)
   (concat name " 0N! {"
-	  (mapconcat 'identity (nreverse a) " ")
+	  (mapconcat 'identity (nreverse (take-every-other a)) " ")
 	  " x}")) 
 (provide 'ob-q)
