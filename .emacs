@@ -1,6 +1,21 @@
 ; (add-to-list 'load-path "~/.emacs.d/lisp/benchmark-init-el/")
 ; (require 'benchmark-init-loaddefs)
 ; (benchmark-init/activate)
+(menu-bar-mode -1)
+(show-paren-mode t)
+(global-hl-line-mode t)
+(column-number-mode t)
+(set-scroll-bar-mode nil)
+(tool-bar-mode -1)
+(setq inhibit-startup-screen t
+      initial-scratch-message nil
+      make-backup-files nil
+      use-dialog-box nil
+      visible-bell nil
+      echo-keystrokes 0.1)
+(defalias 'yes-or-no-p 'y-or-n-p)
+;(define-key evil-normal-state-map (kbd "C-a") 'evil-numbers/inc-at-pt)
+(modify-syntax-entry ?- "w")
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
@@ -10,14 +25,14 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
-(eval-when-compile
-  (require 'use-package))
+(eval-when-compile (require 'use-package))
 (require 'diminish)
-
-(use-package use-package-chords
-  :config
-  (key-chord-mode 1))
-
+(use-package use-package-chords :config (key-chord-mode 1))
+(use-package evil		:config (evil-mode t) (evil-set-toggle-key "C-="))
+(use-package org-bullets	:config (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+(use-package magit		:chords (("ms" . magit-status)))
+(use-package linum-mode		:chords (("nt" . linum-mode)))
+(use-package linum-relative :config (linum-relative-mode))
 (use-package key-chord
   :config
   (setq key-chord-two-keys-delay 0.04)
@@ -36,28 +51,8 @@
   (setq company-idle-delay 0.01
 	company-minimum-prefix-length 2))
 
-(use-package evil
-  :config
-  (evil-mode t)
-  (evil-set-toggle-key "C-="))
-
-(use-package org-bullets
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
-(use-package magit
-  :chords (("ms" . magit-status)))
-
-(use-package linum-mode
-  :chords (("nt" . linum-mode)))
-
-(use-package linum-relative
-  :config (linum-relative-mode))
-
 (use-package ivy
-  :config
-  (ivy-mode 1)
-  (setq ivy-use-virtual-buffers t)
+  :config (ivy-mode 1) (setq ivy-use-virtual-buffers t)
   :chords ((" s" . swiper)
 	   (" x" . counsel-M-x)
 	   (" p" . counsel-find-file)
@@ -69,9 +64,7 @@
 	   (" l" . counsel-locate)
 	   ))
 
-(use-package window-numbering
-  :config
-  (window-numbering-mode t)
+(use-package window-numbering :config (window-numbering-mode t)
   (defun select-window-by-number (i &optional arg)
     "Select window given number I by `window-numbering-mode'.
 If prefix ARG is given, delete the window instead of selecting it."
@@ -92,18 +85,6 @@ If prefix ARG is given, delete the window instead of selecting it."
 	   (" 8" . select-window-8)
 	   (" 9" . select-window-9)
 	   ))
-(menu-bar-mode nil)
-(show-paren-mode t)
-(global-hl-line-mode t)
-(column-number-mode t)
-(set-scroll-bar-mode nil)
-(tool-bar-mode nil)
-(setq inhibit-startup-screen t
-      initial-scratch-message nil
-      make-backup-files nil
-      use-dialog-box nil
-      visible-bell nil
-      echo-keystrokes 0.1)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -129,10 +110,7 @@ If prefix ARG is given, delete the window instead of selecting it."
 (autoload 'q-mode "q-mode")
 (add-to-list 'auto-mode-alist '("\\.[kq]\\'" . q-mode))
 
-(defalias 'yes-or-no-p 'y-or-n-p)
 
-;(define-key evil-normal-state-map (kbd "C-a") 'evil-numbers/inc-at-pt)
-(modify-syntax-entry ?- "w")
 
 
 
