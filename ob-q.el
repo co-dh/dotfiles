@@ -3,22 +3,35 @@
 ;; Keywords: kdb+, q, literate programming, reproducible research
 
 (defun ob-q-filter (proc string)
-  (message string)
   (setq ob-q-output (concat ob-q-output string)))
 
 (defun ob-q-init ()
   (let ((process-connection-type nil))
-    (start-process "q" nil "q" ))
+    (start-process "q" nil "q" ""))
   (set-process-filter (get-process "q") 'ob-q-filter)
   )
+
+(defconst sep "`SeParator_for_ob_q\n")
+(require 'subr-x)
+
+(setq ob-q-i 0)
 
 ;; This is the main function which is called to evaluate a code
 (defun org-babel-execute:q (body params)
   (if (not (get-process "q")) (ob-q-init))
   (setq ob-q-output "")
-  (process-send-string "q" (concat body "\n"))
-  (accept-process-output (get-process "q") 0.3)
-  ob-q-output)
+  (message "sending: [%s]" body)
+  (process-send-string "q" (concat body "\n" sep))
+  (accept-process-output (get-process "q") 5 0 1)
+  (message "get out:[%s]" ob-q-output)
+  (while (not (or (string-suffix-p sep ob-q-output)
+		  (string-suffix-p "wsfull\n" ob-q-output)
+		  (string-suffix-p "q\n" ob-q-output)
+                  ))
+    (accept-process-output (get-process "q") 1000 0 1)
+    (message "%s get output :[%s]" ob-q-i ob-q-output)
+    (setq ob-q-i (+ 1 ob-q-i)))
+  (string-remove-suffix sep ob-q-output))
 
 (defun qq (string)
   (replace-regexp-in-string
@@ -44,8 +57,10 @@
 (defun step2 (row-number this-cell above x)
   (if (= 0 (mod row-number 2))
       this-cell
-    (concat "=>" (qq (concat "x: 0N! " above 
-			(if (= 3 row-number) x " x"))))))
+    (concat "=>" (qq (concat "x: 0N! " above " " 
+			     (if (= 3 row-number) x " x"))))))
+
+; (step2 3 "til" "320" "320")
 
 (defun take-every-other (lst)
   (if (null lst)
@@ -58,4 +73,17 @@
   (concat name " 0N! {"
 	  (mapconcat 'identity (nreverse (take-every-other a)) " ")
 	  " x}")) 
+
+(defun step3 (row-number left leftup up x)
+  " deprecated"
+  (if (= 0 (mod row-number 2))
+      ""
+    (qq(concat "showprd x: " leftup " " 
+                (if (= 3 row-number) x " x")))))
+
+
+(defun qq2 (string)
+  (cons 2 (cons 1 nil))
+  )
+
 (provide 'ob-q)
