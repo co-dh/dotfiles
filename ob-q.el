@@ -83,7 +83,7 @@
 
 
 (defun qq2 (string)
-  (cons 2 (cons 1 nil))
+  (cons "2" (cons "1" nil))
   )
 
 (provide 'ob-q)
