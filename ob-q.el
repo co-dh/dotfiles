@@ -25,13 +25,19 @@
   (accept-process-output (get-process "q") 5 0 1)
   (message "get out:[%s]" ob-q-output)
   (while (not (or (string-suffix-p sep ob-q-output)
-		  (string-suffix-p "wsfull\n" ob-q-output)
-		  (string-suffix-p "q\n" ob-q-output)
+                  (string-suffix-p "wsfull\n" ob-q-output)
+                  (string-suffix-p "q\n" ob-q-output)
                   ))
     (accept-process-output (get-process "q") 1000 0 1)
     (message "%s get output :[%s]" ob-q-i ob-q-output)
     (setq ob-q-i (+ 1 ob-q-i)))
-  (string-remove-suffix sep ob-q-output))
+  (let ((out (string-remove-suffix sep ob-q-output))
+        (res (split-string (alist-get :results params))))
+    (if (member "value" res) 
+        (mapcar (lambda (s) (split-string s "|"))
+                (split-string out))
+      out 
+  )))
 
 (defun qq (string)
   (replace-regexp-in-string
