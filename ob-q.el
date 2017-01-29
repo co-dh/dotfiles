@@ -32,17 +32,21 @@
     (message "%s get output :[%s]" ob-q-i ob-q-output)
     (setq ob-q-i (+ 1 ob-q-i)))
   (let ((out (string-remove-suffix sep ob-q-output))
-        (res (split-string (alist-get :results params))))
-    (if (member "value" res) 
-        (mapcar (lambda (s) (split-string s "|"))
-                (split-string out))
-      out 
-  )))
+        (results (alist-get :results params))
+        )
+    (if (and (stringp results)
+             (member "output" (split-string results))) 
+        out 
+      (mapcar (lambda (s) (split-string s "|"))
+              (split-string (string-remove-suffix "\n-1\n" out) "\n"))
+      )))
 
+; (qq "x: 0N! fork 0x0004")
 (defun qq (string)
   (replace-regexp-in-string
    "\n" " " 
-   (org-babel-execute:q string nil)))
+   (org-babel-execute:q string '((:results . "output")))))
+
 
 (defun qk (string)
   (replace-regexp-in-string
