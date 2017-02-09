@@ -38,13 +38,13 @@
  '(column-number-mode t)
  '(custom-safe-themes
    (quote
-    ("a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
+    ("c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
  '(font-use-system-font t)
  '(org-babel-load-languages (quote ((python . t) (q . t) (emacs-lisp . t))))
  '(org-confirm-babel-evaluate nil)
  '(package-selected-packages
    (quote
-    (smart-mode-line linum-relative ivy-hydra hydra use-package-chords counsel ivy org-bullets company magit key-chord spacemacs-theme evil evil-numbers window-numbering ag multi-term)))
+    (smex smart-mode-line linum-relative ivy-hydra hydra counsel ivy org-bullets company magit spacemacs-theme evil evil-numbers window-numbering ag multi-term)))
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -57,62 +57,41 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
-(global-set-key (kbd "M-b") 'switch-to-buffer)
-(global-set-key (kbd "M-w") 'save-buffer)
-(global-set-key (kbd "M-r") 'swiper)
-(global-set-key (kbd "M-p") 'counsel-find-file)
-(global-set-key (kbd "C-a") 'counsel-ag)
-(global-set-key (kbd "M-t") 'counsel-git)
-(global-set-key (kbd "M-l") 'counsel-locate)
+; (global-set-key (kbd "M-r") 'swiper)
+; (global-set-key (kbd "M-p") 'counsel-find-file)
+(global-set-key (kbd "C-s") 'save-buffer)
 
 (eval-when-compile (require 'use-package))
-(use-package key-chord
-  :config
-  (key-chord-mode 1)
-  (setq key-chord-two-keys-delay 0.03))
-(use-package use-package-chords :config (key-chord-mode 1))
-(use-package evil		:config (evil-mode t) (evil-set-toggle-key "C-="))
+(use-package evil		:config (evil-mode t) (evil-set-toggle-key "C-=") :diminish undo-tree-mode)
 (use-package org-bullets	:config (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-(use-package magit		:chords (("ms" . magit-status)))
-(use-package linum-mode		:chords (("nt" . linum-mode)))
-(use-package linum-relative :config (linum-relative-mode)
-  :chords (("cv" . customize-variable) 
-           ("kw" . delete-window) 
-           ("ps" . split-window-vertically) 
-           ("sv" . split-window-horizontally))
-   )
+(use-package magit	:bind ("M-s t" . magit-status))
+(use-package linum-mode		)
+(use-package linum-relative :config (linum-relative-mode))
 
 (use-package company
+  :diminish company-mode
   :config
   (global-company-mode t)
   (setq company-idle-delay 0 
 	company-minimum-prefix-length 2))
 
 (use-package ivy
+  :diminish ivy-mode
   :config (ivy-mode 1) (setq ivy-use-virtual-buffers t)
-  :chords (
-	   ("hf" . counsel-describe-function)
-	   ("hv" . counsel-describe-variable)
-	   ("hl" . counsel-find-library)
-	   )
+  :bind
+  ("M-x" . counsel-M-x)
+  ("M-b" . ivy-switch-buffer)
+  ("C-a" . counsel-ag)
+  ("C-p" . counsel-git)
   )
 
-(use-package window-numbering :config (window-numbering-mode t)
-  (defun select-window-by-number (i &optional arg)
-    "Select window given number I by `window-numbering-mode'.
-If prefix ARG is given, delete the window instead of selecting it."
-    (interactive "P")
-    (let ((windows (car (gethash (selected-frame) window-numbering-table)))
-          window)
-      (if (and (>= i 0) (< i 10)
-               (setq window (aref windows i)))
-          (select-window window)
-        (error "No window numbered %s" i))))
-  )
-
+(use-package window-numbering :config (window-numbering-mode t))
 (defun recalc ()
   (interactive)
   (org-table-recalculate 'ALL))
 (global-set-key (kbd "C-l") 'recalc)
 
 (sml/setup)
+(delete "/usr/share/emacs/25.1/lisp/play" load-path)
+(setq company-dabbrev-downcase nil)
+; 4244 M-x
