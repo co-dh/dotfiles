@@ -1,2 +1,2 @@
 #!/bin/bash
-xcape -e  "Control_L=Tab;Alt_R=Escape"
+xcape -e  "Alt_R=Escape"

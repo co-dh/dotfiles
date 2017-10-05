@@ -1,7 +1,3 @@
-; (add-to-list 'load-path "~/.emacs.d/lisp/benchmark-init-el/")
-; (require 'benchmark-init-loaddefs)
-; (benchmark-init/activate)
-
 (menu-bar-mode -1)
 (show-paren-mode t)
 (global-hl-line-mode t)
@@ -13,22 +9,25 @@
       make-backup-files nil
       use-dialog-box nil
       visible-bell nil
+      package-enable-at-startup nil 
       echo-keystrokes 0.1)
 (defalias 'yes-or-no-p 'y-or-n-p)
 ;(define-key evil-normal-state-map (kbd "C-a") 'evil-numbers/inc-at-pt)
 (modify-syntax-entry ?- "w")
 (modify-syntax-entry ?_ "w")
 (setq-default indent-tabs-mode nil)
-(setq select-enable-primary t)
+;(setq select-enable-primary t)
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 (package-initialize)
+(unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
 
-(add-to-list 'load-path "~/.emacs.d/lisp/")
-(add-to-list 'load-path "~/dotfiles/")
-(autoload 'q-mode "q-mode")
-(add-to-list 'auto-mode-alist '("\\.[kq]\\'" . q-mode))
+(require 'use-package)
+(require 'diminish)
+(setq use-package-always-ensure t)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -38,13 +37,12 @@
  '(column-number-mode t)
  '(custom-safe-themes
    (quote
-    ("c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
- '(font-use-system-font t)
- '(org-babel-load-languages (quote ((python . t) (q . t) (emacs-lisp . t))))
- '(org-confirm-babel-evaluate nil)
+    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
+ '(evil-want-C-u-scroll t)
  '(package-selected-packages
    (quote
-    (smex smart-mode-line linum-relative ivy-hydra hydra counsel ivy org-bullets company magit spacemacs-theme evil evil-numbers window-numbering ag multi-term)))
+    (persp-projectile ace-link which-key helm-pydoc pydoc spaceline spacemacs-theme powerline ivy-hydra counsel smex evil-leader magit evil use-package diminish bind-key)))
+ '(shell-file-name "/bin/bash")
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
@@ -52,46 +50,72 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Inconsolata-g for Powerline" :foundry "PfEd" :slant normal :weight normal :height 90 :width normal)))))
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+ '(default ((t (:family "DejaVu Sans Mono" :foundry "PfEd" :slant normal :weight normal :height 90 :width normal)))))
 
-; (global-set-key (kbd "M-r") 'swiper)
-; (global-set-key (kbd "M-p") 'counsel-find-file)
-(global-set-key (kbd "C-s") 'save-buffer)
-
-(eval-when-compile (require 'use-package))
-(use-package evil		:config (evil-mode t) (evil-set-toggle-key "C-=") :diminish undo-tree-mode)
-(use-package org-bullets	:config (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-(use-package magit	:bind ("M-s t" . magit-status))
-(use-package linum-mode		)
-(use-package linum-relative :config (linum-relative-mode))
-
-(use-package company
-  :diminish company-mode
-  :config
-  (global-company-mode t)
-  (setq company-idle-delay 0 
-	company-minimum-prefix-length 2))
-
-(use-package ivy
-  :diminish ivy-mode
-  :config (ivy-mode 1) (setq ivy-use-virtual-buffers t)
-  :bind
-  ("M-x" . counsel-M-x)
-  ("M-b" . ivy-switch-buffer)
-  ("C-a" . counsel-ag)
-  ("C-p" . counsel-git)
+(use-package evil-leader
+  :config (global-evil-leader-mode t) (evil-leader/set-leader "<SPC>")
+  (evil-leader/set-key
+    "w" 'save-buffer
+    "f" 'find-file
+    "k" 'kill-this-buffer
+    )
   )
 
-(use-package window-numbering :config (window-numbering-mode t))
-(defun recalc ()
-  (interactive)
-  (org-table-recalculate 'ALL))
-(global-set-key (kbd "C-l") 'recalc)
+;(setq evil-want-Uuu-scroll t)
+;(require 'evil)
 
-(sml/setup)
-(delete "/usr/share/emacs/25.1/lisp/play" load-path)
-(setq company-dabbrev-downcase nil)
-; 4244 M-x
+(use-package evil
+  :config (evil-mode t) (evil-set-toggle-key "C-=") )
+
+(use-package ivy :diminish ivy-mode :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (evil-leader/set-key "b" 'ivy-switch-buffer)
+  )
+
+;(use-package powerline :config (powerline-default-theme))
+(use-package ivy-hydra)
+(use-package winum :config (winum-mode)
+  (evil-leader/set-key "1" 'winum-select-window-1
+    "2" 'winum-select-window-2
+    "3" 'winum-select-window-3
+    "4" 'winum-select-window-4
+    "5" 'winum-select-window-5
+    "6" 'winum-select-window-6
+    "7" 'winum-select-window-7
+    "8" 'winum-select-window-8
+    "9" 'winum-select-window-9
+    ))
+
+(use-package magit :config (evil-leader/set-key "gs" 'magit-status))
+(use-package smex) ;   
+(use-package counsel :config
+  (evil-leader/set-key
+    "<SPC>" 'counsel-M-x
+    "gf" 'counsel-git
+    "gg" 'counsel-git-grep
+    "cp" 'counsel-package
+    "im" 'counsel-imenu
+    "/"  'counsel-ag
+    ))
+
+(use-package which-key :config (which-key-mode t))
+  
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+(autoload 'q-mode "q-mode")
+(add-to-list 'auto-mode-alist '("\\.[kq]\\'" . q-mode))
+
+(load-theme 'spacemacs-light) 
+(diminish 'undo-tree-mode)
+
+(require 'spaceline-config)
+(spaceline-spacemacs-theme)
+
+(with-eval-after-load 'evil
+    (defalias #'forward-evil-word #'forward-evil-symbol))
+
+(use-package avy
+  :config (evil-leader/set-key
+            "u" 'evil-avy-goto-char-2-above
+            "d" 'evil-avy-goto-char-2-below
+            ))
