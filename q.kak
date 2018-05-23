@@ -62,3 +62,23 @@ add-highlighter shared/q/code regex '(?i)\b0x[\da-f]+\b' 0:value
         add-highlighter shared/q/code regex '\b(${keywords})\b' 0:keyword
     "
 }
+add-highlighter shared/q/code regex (?<=[\w\s\d'"_])(=|<>|~|<|<=|>|>=|\+|-|\*|%|#|,|\^|_|\||&) 0:operator
+
+define-command -hidden q-indent-on-new-line %{
+    evaluate-commands -draft -itersel %{
+        # preserve previous line indent
+        try %{ execute-keys -draft \; K <a-&> }
+        # cleanup trailing whitespaces from previous line
+        try %{ execute-keys -draft k <a-x> s \h+$ <ret> d }
+    }
+}
+
+hook global WinSetOption filetype=q %{
+    hook window InsertChar \n -group q-indent q-indent-on-new-line
+    # cleanup trailing whitespaces on current line insert end
+    hook window ModeChange insert:.* -group q-indent %{ try %{ execute-keys -draft \; <a-x> s ^\h+$ <ret> d } }
+}
+
+hook global WinSetOption filetype=(?!q).* %{
+    remove-hooks window q-indent
+}
