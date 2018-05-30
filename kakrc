@@ -1,34 +1,3 @@
-set global grepcmd 'rg --column'
-
-define-command -override -hidden -params 2 swap-key %{eval %{ echo -debug %arg{1} %arg{2} }}
-#%sh{echo 'swaps[]' | q ~/kak.q}
-map global normal "'" :
-map global normal <space> ,
-map global normal  , <space>
-map global normal <c-l> x:tmux-send-text<ret>j
-map global insert <c-l> <esc>x:tmux-send-text<ret>ji
-
-   #test
-# tab to space
-hook global InsertChar \t %{ exec -draft -itersel h@ }
-
-define-command -override -docstring 'list file by git' git-edit -params 1 -shell-candidates %{git ls-files} %{edit %arg{1}}
-alias global ge git-edit
-#define-command -override -params 1.. run-shell info %{pwd}
-
-#info %sh{printf "%%{$(ls | head -53)}"}
-
-colorscheme solarized-light
-add-highlighter global/ show_matching
-add-highlighter global/ number_lines -relative -hlcursor
-
-map -docstring 'Eval in kak' global user e :<c-r>.<ret>
-map -docstring 'Buffer' global user b :b<space>
-map -docstring 'Project' global user p :ge<space>
-map -docstring 'Kill buffer' global user k :db<ret>
-map -docstring 'Write buffer' global user w :w<ret>
-map -docstring 'command' global user <space> :
-
 set global lintcmd %{
     pylintplus1()
     {
@@ -37,7 +6,78 @@ set global lintcmd %{
     }
     pylintplus1  }
 
-#add-highlighter window dynregex '%reg{/}' 0:+ui
-#rmhl window/dynregex_\%reg{<slash>}
-declare-user-mode toggle
-#map global toggle /
+set global grepcmd 'ag --column'
+map global normal "'" :
+map global normal <space> ,
+map global normal , <space> 
+map global normal <c-l> x_L:tmux-send-text<ret>jgh
+map global insert <c-l> <esc>x_L:tmux-send-text<ret>jghi
+
+def -override -docstring 'open file under current dircetory' edit-in-prj -params 1 -shell-candidates %{ag -l} %{edit %arg{1}}
+def -override pwd 'echo %sh{pwd}'
+def -override k -params 1 %{echo %sh{echo }}
+colorscheme solarized-dark
+#addhl global/ show_matching 
+#addhl global/ column 120 Error
+
+map -docstring 'command'               global user <space> :
+map -docstring 'switch buffer'         global user b :<space>b<space>
+map -docstring 'Eval in Kak'           global user e :<space><c-r>.<ret>
+map -docstring 'kill buffer'           global user k :<space>db<ret>
+map -docstring 'reload q'              global user L :<space>write<ret>:<space>tmux-send-text1<space>'\l<space><c-r>%'<ret>
+map -docstring 'send select'           global user l :<space>tmux-send-text1<space><c-r>.<ret>
+map -docstring 'grep-next-match'       global user n :<space>grep-next-match<ret>
+map -docstring 'grep-previous-match'   global user N :<space>grep-previous-match<ret>
+map -docstring 'Project'               global user p :<space>edit-in-prj<space>
+map -docstring 'turn off number_lines' global user t :<space>rmhl<space>buffer/number_lines<ret>
+map -docstring 'Line Num'              global user t :addhl<space>window/<space>number_lines<space>-relative<space>-hlcursor<ret>
+map -docstring 'write buffer'          global user w :<space>w<ret>
+
+# tmux: set -g focus-events on
+#hook -group test global FocusIn .* %{
+#    #face window StatusLine rgb:586e75,rgb:eeffd5+b
+#}
+#hook -group test global FocusOut .* %{
+#    #unset-face window StatusLine
+#    rmhl buffer/number_lines
+#}
+
+hook global InsertChar \t %{ exec -draft h@ }
+
+
+set global tabstop 4
+
+set-option global toolsclient toolsclient
+def sel-trailing-space -override %{exec '%s\h+$<ret>'}
+
+define-command -override -hidden tmux-send-text -docstring "Send the selected text to the repl pane" %{
+    nop %sh{
+        tmux set-buffer -b kak_selection "${kak_selection}"
+        kak_orig_window=$(tmux display-message -p '#I')
+        kak_orig_pane=$(tmux display-message -p '#{pane_id}')
+        tmux select-window -t:$(tmux show-buffer -b kak_repl_window)
+        tmux select-pane -t:.$(tmux show-buffer -b kak_repl_pane)
+        tmux paste-buffer -b kak_selection
+        tmux select-window -t:${kak_orig_window}
+        tmux select-pane -t:.${kak_orig_pane}
+    }
+}
+
+define-command -override -hidden tmux-send-text1 -params 1 -docstring "Send text to the repl pane" %{
+    nop %sh{
+        set -v
+        tmux set-buffer -b kak_selection1 "$@
+"
+        kak_orig_window=$(tmux display-message -p '#I')
+        kak_orig_pane=$(tmux display-message -p '#{pane_id}')
+        tmux select-window -t:$(tmux show-buffer -b kak_repl_window)
+        tmux select-pane -t:.$(tmux show-buffer -b kak_repl_pane)
+        tmux paste-buffer -b kak_selection1
+        tmux select-window -t:${kak_orig_window}
+        tmux select-pane -t:.${kak_orig_pane}
+    }
+}
+
+
+#add-highlighter window dynregex '%reg{/}' 0:u
+
