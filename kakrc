@@ -50,22 +50,8 @@ set global tabstop 4
 set-option global toolsclient toolsclient
 def sel-trailing-space -override %{exec '%s\h+$<ret>'}
 
-define-command -override -hidden tmux-send-text -docstring "Send the selected text to the repl pane" %{
-    nop %sh{
-        tmux set-buffer -b kak_selection "${kak_selection}"
-        kak_orig_window=$(tmux display-message -p '#I')
-        kak_orig_pane=$(tmux display-message -p '#{pane_id}')
-        tmux select-window -t:$(tmux show-buffer -b kak_repl_window)
-        tmux select-pane -t:.$(tmux show-buffer -b kak_repl_pane)
-        tmux paste-buffer -b kak_selection
-        tmux select-window -t:${kak_orig_window}
-        tmux select-pane -t:.${kak_orig_pane}
-    }
-}
-
 define-command -override -hidden tmux-send-text1 -params 1 -docstring "Send text to the repl pane" %{
     nop %sh{
-        set -v
         tmux set-buffer -b kak_selection1 "$@
 "
         kak_orig_window=$(tmux display-message -p '#I')
@@ -78,6 +64,8 @@ define-command -override -hidden tmux-send-text1 -params 1 -docstring "Send text
     }
 }
 
+def -override test -params 0..1 %{echo %sh{echo $#}}
 
 #add-highlighter window dynregex '%reg{/}' 0:u
-
+hook global InsertBegin .* %{ face window PrimaryCursor +u}
+hook global InsertEnd   .* %{ face window PrimaryCursor rgb:fdf6e3,rgb:657b83}
