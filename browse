@@ -1,0 +1,2 @@
+#!/bin/sh
+test -d $1 && ls --color $1 || highlight -O ansi --force $1 

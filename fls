@@ -1,0 +1,2 @@
+#!/bin/sh
+ls --color | fzf --ansi --header=$(pwd) --preview='browse {}'

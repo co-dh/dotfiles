@@ -1,3 +1,27 @@
+def -docstring 'invoke fzf to open a file' \
+  fzf-file %{ %sh{
+    if [ -z "$TMUX" ]; then
+      echo echo only works inside tmux
+    else
+      FILE=$(find * -type f | fzf-tmux -d 15 --preview "cat {}")
+      if [ -n "$FILE" ]; then
+        printf 'eval -client %%{%s} edit %%{%s}\n' "${kak_client}" "${FILE}" | kak -p "${kak_session}"
+      fi
+    fi
+} }
+
+def -docstring 'invoke fzf to select a buffer' \
+  fzf-buffer %{ %sh{
+    if [ -z "$TMUX" ]; then
+      echo echo only works inside tmux
+    else
+      BUFFER=$(printf %s\\n "${kak_buflist}" | tr : '\n' | fzf-tmux -d 15)
+      if [ -n "$BUFFER" ]; then
+        echo "eval -client '$kak_client' 'buffer ${BUFFER}'" | kak -p ${kak_session}
+      fi
+    fi
+} }
+
 set global lintcmd %{
     pylintplus1()
     {
@@ -21,11 +45,11 @@ colorscheme solarized-dark
 #addhl global/ column 120 Error
 
 map -docstring 'command'               global user <space> :
-map -docstring 'switch buffer'         global user b :<space>b<space>
+map -docstring 'switch buffer'         global user b :b<space>
 map -docstring 'Eval in Kak'           global user e :<space><c-r>.<ret>
 map -docstring 'kill buffer'           global user k :<space>db<ret>
 map -docstring 'reload q'              global user L :<space>write<ret>:<space>tmux-send-text1<space>'\l<space><c-r>%'<ret>
-map -docstring 'send select'           global user l :<space>tmux-send-text1<space><c-r>.<ret>
+map -docstring 'send select'           global user l :tmux-send-text<space><c-r>.<ret>
 map -docstring 'grep-next-match'       global user n :<space>grep-next-match<ret>
 map -docstring 'grep-previous-match'   global user N :<space>grep-previous-match<ret>
 map -docstring 'Project'               global user p :<space>edit-in-prj<space>
@@ -69,3 +93,5 @@ def -override test -params 0..1 %{echo %sh{echo $#}}
 #add-highlighter window dynregex '%reg{/}' 0:u
 hook global InsertBegin .* %{ face window PrimaryCursor +u}
 hook global InsertEnd   .* %{ face window PrimaryCursor rgb:fdf6e3,rgb:657b83}
+
+
