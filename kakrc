@@ -31,7 +31,7 @@ map -docstring 'send select'           global user l :<space>tmux-send-text<ret>
 map -docstring 'grep-next-match'       global user n :<space>grep-next-match<ret>
 map -docstring 'grep-previous-match'   global user N :<space>grep-previous-match<ret>
 map -docstring 'Project'               global user p :fzf-file<ret>
-map -docstring 'Open file in git'      global user P :fzf-git-lsfile<ret>
+map -docstring 'Open file in git'      global user P :fzf-git-root<ret>
 map -docstring 'turn off number_lines' global user T :<space>rmhl<space>window/mynumber<ret>
 map -docstring 'Line Num'              global user <c-t> :addhl<space>window/mynumber<space>number-lines<space>-relative<space>-hlcursor<ret>
 map -docstring 'make test'             global user t :make<space>test<ret>
@@ -61,18 +61,18 @@ hook global BufCreate .*/?mk %{
 }
 
 def  -override -docstring 'invoke fzf to open a file' \
-  fzf-file %{ %sh{
-      FILE=$(fd -t f | fzf-tmux -1 -d 15 --preview='head -n 100 {}')
+  fzf-file %{nop %sh{
+      FILE=$(fd -t file | fzf-tmux --exact --preview='head -n 100 {}')
       if [ -n "$FILE" ]; then
         printf 'eval -client %%{%s} edit %%{%s}\n' "${kak_client}" "${FILE}" | kak -p "${kak_session}"
       fi
 } }
 
-def  -override -docstring 'invoke fzf to open a file with git ls-files' \
-  fzf-git-lsfile %{ %sh{
-      FILE=$(git ls-files $(git rev-parse --show-toplevel) | fzf-tmux -1 -d 15 --preview='head -n 100 {}')
+def  -override -docstring 'invoke fzf to open a file from git root' \
+  fzf-git-root %{ nop %sh{
+      FILE=$(fd -t file . $(git rev-parse --show-toplevel) | fzf-tmux --exact --preview='head -n 100 {}')
       if [ -n "$FILE" ]; then
-        printf 'eval -client %%{%s} edit %%{%s}\n' "${kak_client}" "${FILE}" | kak -p "${kak_session}"
+        printf 'eval -client %%{%s} edit %%{%s}' "${kak_client}" "${FILE}" | kak -p "${kak_session}"
       fi
 } }
 
