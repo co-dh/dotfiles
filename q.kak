@@ -5,33 +5,36 @@ hook global BufCreate .*\.(q) %{
     set-option buffer filetype q
 }
 rmhl shared/q
-add-highlighter shared/ regions -default code q \
-    string   '"'   (?<!\\)(\\\\)*"  '' \
-    comment  '^/\h*$'   ^\Q\\E\h*$  '' \
-    comment  ' /'   '$'             '' \
-    comment  '^/'   '$'             '' \
-    comment  '^\Q\\E\h*$'   'this match to eof'   ''
+add-highlighter shared/q regions
 
- 
-add-highlighter shared/q/string fill string
-add-highlighter shared/q/comment fill comment
+add-highlighter shared/q/code default-region group
+add-highlighter shared/q/string region '"'   (?<!\\)(\\\\)*"  fill string
+add-highlighter shared/q/comment region '^/\h*$'   ^\Q\\E\h*$  fill comment
+
+add-highlighter shared/q/comment1 region  ' /'   '$' fill comment
+add-highlighter shared/q/comment2 region  '^\Q\\E\h*$'   'this match to eof' fill comment
+add-highlighter shared/q/comment3 region  '^/'   '$' fill comment
+
 # Float formats
-add-highlighter shared/q/code regex '\b\d+[eE][+-]?\d+[ef]?\b' 0:value
-add-highlighter shared/q/code regex '(\b\d+)?\.\d+[ef]?\b' 0:value
-add-highlighter shared/q/code regex '\b\d+\.[ef]?' 0:value
+add-highlighter shared/q/code/int regex '\b\d+[eE][+-]?\d+[ef]?\b' 0:value
+add-highlighter shared/q/code/ regex '(\b\d+)?\.\d+[ef]?\b' 0:value
+add-highlighter shared/q/code/ regex '\b\d+\.[ef]?' 0:value
 #inf and null
-add-highlighter shared/q/code regex '\b0[NW][hijepdnuvt]?\b' 0:value
-add-highlighter shared/q/code regex '\b0[nw]\b' 0:value
-add-highlighter shared/q/code regex '\b0N[gm]\b' 0:value
+add-highlighter shared/q/code/ regex '\b0[NW][hijepdnuvt]?\b' 0:value
+add-highlighter shared/q/code/ regex '\b0[nw]\b' 0:value
+add-highlighter shared/q/code/ regex '\b0N[gm]\b' 0:value
 
-hook -group q-highlight global WinSetOption filetype=q %{ add-highlighter window ref q }
+
+# integers
+add-highlighter shared/q/code/ regex '\b([1-9]\d*|0)[hij]?\b' 0:value
+add-highlighter shared/q/code/ regex '\b[01]+b\b' 0:value
+add-highlighter shared/q/code/ regex '(?i)\b0x[\da-f]+\b' 0:value
+
+
+hook -group q-highlight global WinSetOption filetype=q %{ add-highlighter window/q ref q }
 hook -group q-highlight global WinSetOption filetype=(?!q).* %{ remove-highlighter window/q }
 
-add-highlighter shared/q/code regex '(?i)\b([1-9]\d*|0)[hij]?\b' 0:value
-add-highlighter shared/q/code regex '(?i)\b[01]+b\b' 0:value
-add-highlighter shared/q/code regex '(?i)\b0x[\da-f]+\b' 0:value
-
-%sh{
+evaluate-commands %sh{
     keywords="abs|acos|asin|atan|avg|bin|binr|cor|cos|cov"
     keywords="${keywords}|delete|dev|div|do|enlist|exec|exit|exp|getenv|if"
     keywords="${keywords}|in|insert|last|like|log|max|min|prd|select|setenv"
@@ -54,15 +57,15 @@ add-highlighter shared/q/code regex '(?i)\b0x[\da-f]+\b' 0:value
     # Add the language's grammar to the static completion list
     printf %s\\n "hook global WinSetOption filetype=q %{
         set-option window static_words '${keywords}'
-    }" | tr '|' ':'
-
+    }" | tr '|' ' '
 
     # Highlight keywords
     printf %s "
-        add-highlighter shared/q/code regex '\b(${keywords})\b' 0:keyword
+        add-highlighter shared/q/code/ regex '\b(${keywords})\b' 0:keyword
     "
 }
-add-highlighter shared/q/code regex (?<=[\w\s\d'"_])(=|<>|~|<|<=|>|>=|\+|-|\*|%|#|,|\^|_|\||&) 0:operator
+
+add-highlighter shared/q/code/ regex (?<=[\w\s\d'"_])(=|<>|~|<|<=|>|>=|\+|-|\*|%|#|,|\^|_|\||&) 0:operator
 
 define-command -hidden q-indent-on-new-line %{
     evaluate-commands -draft -itersel %{
