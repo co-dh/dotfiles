@@ -23,12 +23,12 @@ colorscheme solarized-dark
 #addhl global/ column 120 Error
 
 map -docstring 'command'               global user <space> :
-map -docstring 'switch buffer'         global user b :b<space>
+#map -docstring 'switch buffer'         global user b :b<space>
 map -docstring 'Eval in Kak'           global user e :<space><c-r>.<ret>
 map -docstring 'kill buffer'           global user k :<space>db<ret>
 map -docstring 'reload q'              global user L :<space>write<ret>:<space>tmux-send-text<space>'\l<space><c-r>%'<ret>
-map -docstring 'send select'           global user l :<space>tmux-send-text<ret>gll:send-text<ret>
-map -docstring 'send select'           global user h <a-i>w:<space>tmux-send-text<space><c-r>..head()<ret>gll:send-text<ret>
+map -docstring 'send select + ret'     global user l :<space>tmux-send-text<ret>gll:send-text<ret>
+map -docstring '.head()'               global user h <a-i>w:<space>tmux-send-text<space><c-r>..head()<ret>gll:send-text<ret>
 map -docstring 'grep-next-match'       global user n :<space>grep-next-match<ret>
 map -docstring 'grep-previous-match'   global user N :<space>grep-previous-match<ret>
 map -docstring 'Project'               global user p :fzf-file<ret>
@@ -37,7 +37,9 @@ map -docstring 'turn off number_lines' global user T :<space>rmhl<space>window/m
 map -docstring 'Line Num'              global user <c-t> :addhl<space>window/mynumber<space>number-lines<space>-relative<space>-hlcursor<ret>
 map -docstring 'make test'             global user t :make<space>test<ret>
 map -docstring 'write buffer'          global user w :<space>w<ret>
-map -docstring 'grep'                  global user / :grep<space> 
+map -docstring 'grep'                  global user / :grep<space><c-r>. 
+map -docstring 'git'                   global user g :enter-user-mode<space>git<ret> 
+map -docstring 'lint'                  global user L :lint<ret>
 
 hook global InsertChar \t %{ exec -draft h@ }
 
@@ -66,9 +68,16 @@ def  -override -params 0..1 -docstring 'invoke fzf to open a file. If any argume
       if [ $# -ne 0 ]; then  
           FROM=" . $(git rev-parse --show-toplevel)"
       fi
-      FILE=$(fd -t file $FROM | fzf-tmux --exact --preview='head -n 100 {}')
+      FILE=$(fd -t file $FROM | fzf-tmux --reverse --exact --preview='head -n 100 {}')
       if [ -n "$FILE" ]; then
         printf 'edit %%{%s}' "${FILE}"
       fi
 } }
 
+
+declare-user-mode git
+map -docstring 'blame'      global git b :git<space>blame<ret>
+map -docstring 'hide-blame' global git B :git<space>hide-blame<ret>
+map -docstring 'status'     global git s :git<space>status<ret>
+map -docstring 'checkout'   global git c :git<space>checkout<space>
+map -docstring 'diff'       global git d :git<space>diff<ret>
