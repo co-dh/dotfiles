@@ -23,23 +23,18 @@ colorscheme solarized-dark
 #addhl global/ column 120 Error
 
 map -docstring 'command'               global user <space> :
-#map -docstring 'switch buffer'         global user b :b<space>
+map -docstring 'switch buffer'         global user b :fzf-file<ret>
 map -docstring 'Eval in Kak'           global user e :<space><c-r>.<ret>
 map -docstring 'kill buffer'           global user k :<space>db<ret>
-map -docstring 'reload q'              global user L :<space>write<ret>:<space>tmux-send-text<space>'\l<space><c-r>%'<ret>
+map -docstring 'reload q'              global user L :<space>write<ret>:<space>tmux-send-text<space>'\l<space><c-r>%'<ret>gll:send-text<ret>
 map -docstring 'send select + ret'     global user l :<space>tmux-send-text<ret>gll:send-text<ret>
 map -docstring '.head()'               global user h <a-i>w:<space>tmux-send-text<space><c-r>..head()<ret>gll:send-text<ret>
 map -docstring 'grep-next-match'       global user n :<space>grep-next-match<ret>
 map -docstring 'grep-previous-match'   global user N :<space>grep-previous-match<ret>
 map -docstring 'Project'               global user p :fzf-file<ret>
 map -docstring 'Open file in git'      global user P :fzf-file<space>1<ret>
-map -docstring 'turn off number_lines' global user T :<space>rmhl<space>window/mynumber<ret>
-map -docstring 'Line Num'              global user <c-t> :addhl<space>window/mynumber<space>number-lines<space>-relative<space>-hlcursor<ret>
-map -docstring 'make test'             global user t :make<space>test<ret>
 map -docstring 'write buffer'          global user w :<space>w<ret>
 map -docstring 'grep'                  global user / :grep<space><c-r>. 
-map -docstring 'git'                   global user g :enter-user-mode<space>git<ret> 
-map -docstring 'lint'                  global user L :lint<ret>
 
 hook global InsertChar \t %{ exec -draft h@ }
 
@@ -53,11 +48,7 @@ def sel-trailing-space -override %{exec '%s\h+$<ret>'}
 
 hook -group UnCursor global InsertBegin .* %{ face window PrimaryCursor +u;                    addhl window/ws show-whitespaces -spc ' '}
 hook -group UnCursor global InsertEnd   .* %{ face window PrimaryCursor rgb:002b36,rgb:839496; rmhl window/ws}
-set-option global ui_options ncurses_assistant=off  # poor clippy
 
-# Work related
-define-command -override dse %{cd /apps/ramdisk/dse}
-define-command -override rcd -docstring "relative cd to current buffer" %{cd %sh{dirname ${kak_reg_percent} | tr --delete "'"}}
 
 hook global BufCreate .*/?mk %{
     set-option buffer filetype makefile
@@ -74,10 +65,24 @@ def  -override -params 0..1 -docstring 'invoke fzf to open a file. If any argume
       fi
 } }
 
-
+define-command -override gitroot %{cd %sh(git rev-parse --show-toplevel); pwd}
 declare-user-mode git
+map -docstring 'git'        global user g :enter-user-mode<space>git<ret> 
 map -docstring 'blame'      global git b :git<space>blame<ret>
 map -docstring 'hide-blame' global git B :git<space>hide-blame<ret>
 map -docstring 'status'     global git s :git<space>status<ret>
 map -docstring 'checkout'   global git c :git<space>checkout<space>
 map -docstring 'diff'       global git d :git<space>diff<ret>
+map -docstring 'log'        global git l :git<space>log<ret>
+map -docstring 'cd root'    global git r :gitroot<ret>
+
+
+define-command -override rcd -docstring "relative cd to current buffer" %{cd %sh{dirname ${kak_reg_percent} | tr --delete "'"}; pwd}
+declare-user-mode toggle
+map -docstring 'toggle'         global user t :enter-user-mode<space>toggle<ret>
+map -docstring 'line off'       global toggle T :<space>rmhl<space>window/mynumber<ret>
+map -docstring 'line on'        global toggle t :addhl<space>window/mynumber<space>number-lines<space>-relative<space>-hlcursor<ret>
+map -docstring 'pwd'            global toggle p :pwd<ret>
+map -docstring 'rcd'            global toggle c :rcd<ret>
+map -docstring 'lint'           global toggle l :lint<ret>
+
