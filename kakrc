@@ -1,10 +1,8 @@
-set global lintcmd %{
-    pylintplus1()
-    {
-        pylint --msg-template='{path}:{line:}:{column}: {category}: {msg}' -rn -sn $1 \
-        |awk '{split($0,a,":"); printf( "%s:%s:%s: %s: %s\n",a[1],a[2],a[3]+1,a[4],a[5])}'
-    }
-    pylintplus1  }
+hook global WinSetOption filetype=python %{
+    set global lintcmd kak_pylint
+    lint-enable
+}
+        
 
 set global grepcmd 'rg --column'
 map global normal <space> ,
@@ -23,12 +21,12 @@ colorscheme solarized-dark
 #addhl global/ column 120 Error
 
 map -docstring 'command'               global user <space> :
-map -docstring 'switch buffer'         global user B :b<space>
+map -docstring 'load q block'          global user B <a-|>dd<space>of=/tmp/dh.q<ret>:send-text<space>'\l<space>/tmp/dh.q'<ret>ghh:send-text<ret>
 map -docstring 'switch buffer'         global user b :fzf-buffer<ret>
 map -docstring 'Eval in Kak'           global user e :<space><c-r>.<ret>
 map -docstring 'kill buffer'           global user k :<space>db<ret>
 map -docstring 'reload q'              global user L :<space>write<ret>:<space>tmux-send-text<space>'\l<space><c-r>%'<ret>gll:send-text<ret>
-map -docstring 'send select + ret'     global user l :<space>tmux-send-text<ret>gll:send-text<ret>
+map -docstring 'send select + ret'     global user l :tmux-send-text<ret><c-s>ghh:send-text<ret><c-o>
 map -docstring '.head()'               global user h <a-i>w:<space>tmux-send-text<space><c-r>..head()<ret>gll:send-text<ret>
 map -docstring 'grep-next-match'       global user n :<space>grep-next-match<ret>
 map -docstring 'grep-previous-match'   global user N :<space>grep-previous-match<ret>
@@ -37,6 +35,7 @@ map -docstring 'Function'              global user f :fzf-function<ret>
 map -docstring 'Open file in git'      global user P :fzf-file<space>1<ret>
 map -docstring 'write buffer'          global user w :<space>w<ret>
 map -docstring 'grep'                  global user / :grep<space>
+map -docstring 'grep buffer'           global user G :grep<space>-wg<space><c-r>%<space><c-r>.<ret>
 map -docstring 'grep word'             global user * <a-i>w:grep<space><c-r>.<ret> 
 map -docstring 'quit'                  global user q :q<ret> 
 
