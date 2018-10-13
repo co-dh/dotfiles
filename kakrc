@@ -13,10 +13,8 @@ map global insert <c-a> <home>
 map global insert <c-e> <end>
 map global normal * <a-i>w*
 
-def -override -docstring 'open file under current dircetory' edit-in-prj -params 1 -shell-candidates %{ag -l} %{edit %arg{1}}
 def -override pwd 'echo %sh{pwd}'
-def -override k -params 1 %{echo %sh{echo }}
-colorscheme solarized-dark
+colorscheme solarized-light
 #addhl global/ show_matching 
 #addhl global/ column 120 Error
 
@@ -31,7 +29,7 @@ map -docstring '.head()'               global user h <a-i>w:<space>tmux-send-tex
 map -docstring 'grep-next-match'       global user n :<space>grep-next-match<ret>
 map -docstring 'grep-previous-match'   global user N :<space>grep-previous-match<ret>
 map -docstring 'Project'               global user p :fzf-file<ret>
-map -docstring 'Function'              global user f :fzf-function<ret>
+map -docstring 'Function'              global user f :fzf-grep<space><c-r>.<ret>
 map -docstring 'Open file in git'      global user P :fzf-file<space>1<ret>
 map -docstring 'write buffer'          global user w :<space>w<ret>
 map -docstring 'grep'                  global user / :grep<space>
@@ -96,12 +94,12 @@ def -override -docstring 'invoke fzf to select a buffer' \
       fi
 }}
 
-def -override -docstring 'invoke fzf to select a python function' \
-  fzf-function %{echo %sh{
+def -override -docstring 'invoke fzf to select a python function' -params 1 \
+  fzf-grep %{execute-keys %sh{
       export FILE=${kak_buffile}
-      FUN=$(grep -nE 'def|class ' ${kak_buffile} | fzf-tmux --delimiter=: --exact --no-sort --reverse --preview="sh -c 'tail -n +{1} ${kak_buffile}'" )
+      FUN=$(grep -w --color=always -nE $1 ${kak_buffile} | fzf-tmux --ansi --delimiter=: --exact --no-sort --reverse --preview="sh -c 'tail -n +{1} ${kak_buffile}'" )
       if [ -n "$FUN" ]; then
-        echo ${FUN}
+        echo "$(echo ${FUN}| cut -d: -f 1)g"
       fi
 }}
 
