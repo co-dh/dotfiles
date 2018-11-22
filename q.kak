@@ -34,7 +34,7 @@ add-highlighter shared/q/code/ regex '(?i)\b0x[\da-f]+\b' 0:value
 hook -group q-highlight global WinSetOption filetype=q %{ add-highlighter window/q ref q }
 hook -group q-highlight global WinSetOption filetype=(?!q).* %{ remove-highlighter window/q }
 
-evaluate-commands %sh{
+evaluate-commands %sh<
     keywords="abs|acos|asin|atan|avg|bin|binr|cor|cos|cov"
     keywords="${keywords}|delete|dev|div|do|enlist|exec|exit|exp|getenv|if"
     keywords="${keywords}|in|insert|last|like|log|max|min|prd|select|setenv"
@@ -62,12 +62,13 @@ evaluate-commands %sh{
     # Highlight keywords
     printf %s "
         add-highlighter shared/q/code/ regex '\b(${keywords})\b' 0:keyword
+        add-highlighter shared/q/code/ regex '^\s*([a-zA-Z]\w*)\s*:\s*\{' 1:function
     "
-}
+>
 
 add-highlighter shared/q/code/ regex (?<=[\w\s\d'"_])(=|<>|~|<|<=|>|>=|\+|-|\*|%|#|,|\^|_|\||&) 0:operator
 
-define-command -hidden q-indent-on-new-line %{
+define-command -hidden -override q-indent-on-new-line %{
     evaluate-commands -draft -itersel %{
         # preserve previous line indent
         try %{ execute-keys -draft \; K <a-&> }
@@ -80,6 +81,7 @@ hook global WinSetOption filetype=q %{
     hook window InsertChar \n -group q-indent q-indent-on-new-line
     # cleanup trailing whitespaces on current line insert end
     hook window ModeChange insert:.* -group q-indent %{ try %{ execute-keys -draft \; <a-x> s ^\h+$ <ret> d } }
+    face window function default+b
 }
 
 hook global WinSetOption filetype=(?!q).* %{

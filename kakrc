@@ -12,6 +12,9 @@ map global insert <c-l> '<esc><a-x><a-;>Gi:tmux-send-text<ret>jghi'
 map global insert <c-a> <home>
 map global insert <c-e> <end>
 map global normal * <a-i>w*
+map global normal f <c-s>f
+map global normal 0 gh
+map global normal v <a-i>
 
 def -override pwd 'echo %sh{pwd}'
 colorscheme solarized-light
@@ -19,13 +22,14 @@ colorscheme solarized-light
 #addhl global/ column 120 Error
 
 map -docstring 'command'               global user <space> :
-map -docstring 'load q block'          global user B <a-|>dd<space>of=/tmp/dh.q<ret>:send-text<space>'\l<space>/tmp/dh.q'<ret>ghh:send-text<ret>
+map -docstring 'load q block'          global user B <a-i>p<a-|>dd<space>of=/tmp/dh.q<ret>:send-text<space>'\l<space>/tmp/dh.q'<ret>ghh:send-text<ret>
 map -docstring 'switch buffer'         global user b :fzf-buffer<ret>
 map -docstring 'Eval in Kak'           global user e :<space><c-r>.<ret>
 map -docstring 'kill buffer'           global user k :<space>db<ret>
 map -docstring 'reload q'              global user L :<space>write<ret>:<space>tmux-send-text<space>'\l<space><c-r>%'<ret>gll:send-text<ret>
 map -docstring 'send select + ret'     global user l :tmux-send-text<ret><c-s>ghh:send-text<ret><c-o>
 map -docstring '.head()'               global user h <a-i>w:<space>tmux-send-text<space><c-r>..head()<ret>gll:send-text<ret>
+map -docstring '.head()'               global user v :tmux-repl-vertical<ret>
 map -docstring 'grep-next-match'       global user n :<space>grep-next-match<ret>
 map -docstring 'grep-previous-match'   global user N :<space>grep-previous-match<ret>
 map -docstring 'Project'               global user p :fzf-file<ret>
@@ -34,8 +38,9 @@ map -docstring 'Open file in git'      global user P :fzf-file<space>1<ret>
 map -docstring 'write buffer'          global user w :<space>w<ret>
 map -docstring 'grep'                  global user / :grep<space>
 map -docstring 'grep buffer'           global user G :grep<space>-wg<space><c-r>%<space><c-r>.<ret>
-map -docstring 'grep word'             global user * <a-i>w:grep<space><c-r>.<ret> 
+map -docstring 'grep word'             global user * <a-i>w:grep<space>-w<space><c-r>.<ret> 
 map -docstring 'quit'                  global user q :q<ret> 
+map -docstring 'tmux-repl-vertical'    global user q :q<ret> 
 
 hook global InsertChar \t %{ exec -draft h@ }
 
@@ -106,4 +111,5 @@ def -override -docstring 'invoke fzf to select a python function' -params 1 \
 #sed 's/def //' | sed 's/(.*//' | # function browser
 #--preview="sed -n '/def {}(/,/^def /p' ${kak_buffile}"
 #
-
+#hook  -group resize global BufReload /tmp/denghao/. %{echo %sh{wc  -l $kak_main_reg_percent | cut -d ' ' -f 1 | xargs tmux resize-pane -t $TMUX_PANE -y 5 }}
+#remove-hooks global resize
