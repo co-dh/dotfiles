@@ -13,15 +13,14 @@ map global insert <c-a> <home>
 map global insert <c-e> <end>
 map global normal * <a-i>w*
 map global normal f <c-s>f
-map global normal 0 gh
 map global normal v <a-i>
 
-map global normal n j 
-map global normal j n
-map global normal e k 
-map global normal k e
+map global normal h m 
+map global normal j n 
+map global normal k e   
 map global normal m h
-map global normal h m
+map global normal n j
+map global normal e k
 
 def -override pwd 'echo %sh{pwd}'
 
@@ -43,17 +42,18 @@ map -docstring 'Eval in Kak'           global user e :<space><c-r>.<ret>
 map -docstring 'kill buffer'           global user k :<space>db<ret>
 map -docstring 'reload q'              global user L :<space>write<ret>:<space>tmux-send-text<space>'\l<space><c-r>%'<ret>gll:send-text<ret>
 map -docstring 'send select + ret'     global user l :tmux-send-text<ret><c-s>ghh:send-text<ret><c-o>
-map -docstring '.head()'               global user h <a-i>w:<space>tmux-send-text<space><c-r>..head()<ret>gll:send-text<ret>
-map -docstring '.head()'               global user v :tmux-repl-vertical<ret>
+#map -docstring '.head()'              global user h <a-i>w:<space>tmux-send-text<space><c-r>..head()<ret>gll:send-text<ret>
+map -docstring 'repl-ver'              global user v :tmux-repl-vertical<ret>
 map -docstring 'grep-next-match'       global user n :<space>grep-next-match<ret>
 map -docstring 'grep-previous-match'   global user N :<space>grep-previous-match<ret>
 map -docstring 'Project'               global user p :fzf-file<ret>
-map -docstring 'Function'              global user f :fzf-grep<space><c-r>.<ret>
+map -docstring 'search'                global user f :fzf-search<space><c-r>.<ret>
 map -docstring 'Open file in git'      global user P :fzf-file<space>1<ret>
-map -docstring 'write buffer'          global user w :format<ret>:w<ret>
-map -docstring 'grep'                  global user / :grep<space>
+map -docstring 'write buffer'          global user w :<space>w<ret>
+map -docstring 'grep'                  global user / :fzf-grep<space>
 map -docstring 'grep buffer'           global user G :grep<space>-wg<space><c-r>%<space><c-r>.<ret>
-map -docstring 'grep word'             global user * <a-i>w:grep<space>-w<space><c-r>.<ret> 
+#map -docstring 'grep word'             global user * <a-i>w:grep<space>-w<space><c-r>.<ret> 
+map -docstring 'grep word'             global user * <a-i>w:fzf-grep<space><c-r>.<ret> 
 map -docstring 'quit'                  global user q :q<ret> 
 map -docstring 'tmux-repl-vertical'    global user q :q<ret> 
 
@@ -68,6 +68,10 @@ def sel-trailing-space -override %{exec '%s\h+$<ret>'}
 hook -group UnCursor global InsertBegin .* %{ face window PrimaryCursor +u;                    addhl window/ws show-whitespaces -spc ' '}
 hook -group UnCursor global InsertEnd   .* %{ face window PrimaryCursor rgb:002b36,rgb:839496; rmhl window/ws}
 
+hook global FocusIn .*  %{ addhl window/line number-lines -relative -hlcursor}
+hook global FocusOut .* %{ rmhl window/line}
+
+add-highlighter global/match  show-matching
 
 hook global BufCreate .*/?mk %{
     set-option buffer filetype makefile
@@ -105,6 +109,7 @@ map -docstring 'pwd'            global toggle p :pwd<ret>
 map -docstring 'rcd'            global toggle c :rcd<ret>
 map -docstring 'lint'           global toggle l :lint<ret>
 map -docstring 'next error'     global toggle n :lint-next-error<ret>
+#map -docstring 'make test'      global toggle m :make<space>test<ret>
 
 def -override -docstring 'invoke fzf to select a buffer' \
   fzf-buffer %{eval %sh{
@@ -114,10 +119,11 @@ def -override -docstring 'invoke fzf to select a buffer' \
       fi
 }}
 
-def -override -docstring 'invoke fzf to select a python function' -params 1 \
-  fzf-grep %{execute-keys %sh{
+#--preview= "sh -c 'tail -n +{1} ${kak_buffile}'"
+def -override -docstring 'search word inside buffer' -params 1 \
+  fzf-search %{execute-keys %sh{
       export FILE=${kak_buffile}
-      FUN=$(grep -w --color=always -nE $1 ${kak_buffile} | fzf-tmux --ansi --delimiter=: --exact --no-sort --reverse --preview="sh -c 'tail -n +{1} ${kak_buffile}'" )
+      FUN=$(grep --color=always -nE $1 ${kak_buffile} | fzf-tmux --ansi --delimiter=: --exact --no-sort --reverse )
       if [ -n "$FUN" ]; then
         echo "$(echo ${FUN}| cut -d: -f 1)g"
       fi
@@ -130,9 +136,20 @@ hook global WinSetOption filetype=rust %{
 
 
 
-#sed 's/def //' | sed 's/(.*//' | # function browser
-#--preview="sed -n '/def {}(/,/^def /p' ${kak_buffile}"
+#--preview="tail -n +{2} {1}"
+
+def -override -docstring 'grep in current folder' -params 1.. \
+  fzf-grep %{eval %sh{
+      FILE=$(rg --color always -n "$@" | fzf-tmux --exact --no-sort --ansi --delimiter=: --layout=reverse )
+      if [ -n "$FILE" ]; then
+        echo "$(echo "edit -existing ${FILE}"| cut -d: -f 1,2 | tr : " ")"
+      fi
+}}
+
 #
 #hook  -group resize global BufReload /tmp/denghao/. %{echo %sh{wc  -l $kak_main_reg_percent | cut -d ' ' -f 1 | xargs tmux resize-pane -t $TMUX_PANE -y 5 }}
 #remove-hooks global resize
-source ~/dotfiles/forth.kak
+set-face global search +bi
+add-highlighter global/search dynregex '%reg{/}' 0:search
+#
+#
