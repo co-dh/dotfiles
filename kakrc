@@ -16,8 +16,23 @@ map global normal f <c-s>f
 map global normal 0 gh
 map global normal v <a-i>
 
+map global normal n j 
+map global normal j n
+map global normal e k 
+map global normal k e
+map global normal m h
+map global normal h m
+
 def -override pwd 'echo %sh{pwd}'
-colorscheme solarized-light
+
+evaluate-commands %sh{
+    if [ -z "$TMUX" ]; then
+        echo ""
+    else
+        echo "colorscheme solarized-light"
+    fi
+}
+
 #addhl global/ show_matching 
 #addhl global/ column 120 Error
 
@@ -35,7 +50,7 @@ map -docstring 'grep-previous-match'   global user N :<space>grep-previous-match
 map -docstring 'Project'               global user p :fzf-file<ret>
 map -docstring 'Function'              global user f :fzf-grep<space><c-r>.<ret>
 map -docstring 'Open file in git'      global user P :fzf-file<space>1<ret>
-map -docstring 'write buffer'          global user w :<space>w<ret>
+map -docstring 'write buffer'          global user w :format<ret>:w<ret>
 map -docstring 'grep'                  global user / :grep<space>
 map -docstring 'grep buffer'           global user G :grep<space>-wg<space><c-r>%<space><c-r>.<ret>
 map -docstring 'grep word'             global user * <a-i>w:grep<space>-w<space><c-r>.<ret> 
@@ -108,8 +123,16 @@ def -override -docstring 'invoke fzf to select a python function' -params 1 \
       fi
 }}
 
+hook global WinSetOption filetype=rust %{
+    set window formatcmd 'rustfmt'
+}
+
+
+
+
 #sed 's/def //' | sed 's/(.*//' | # function browser
 #--preview="sed -n '/def {}(/,/^def /p' ${kak_buffile}"
 #
 #hook  -group resize global BufReload /tmp/denghao/. %{echo %sh{wc  -l $kak_main_reg_percent | cut -d ' ' -f 1 | xargs tmux resize-pane -t $TMUX_PANE -y 5 }}
 #remove-hooks global resize
+source ~/dotfiles/forth.kak
