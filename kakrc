@@ -23,13 +23,16 @@ map global normal v <a-i>
 #map global normal n j
 #map global normal e k
 
-#map global normal i l
-#map global normal l i 
-
-
-
 def -override pwd 'echo %sh{pwd}'
-colorscheme solarized-light
+
+evaluate-commands %sh{
+    if [ -z "$TMUX" ]; then
+        echo ""
+    else
+        echo "colorscheme solarized-light"
+    fi
+}
+
 #addhl global/ show_matching 
 #addhl global/ column 120 Error
 
@@ -128,6 +131,13 @@ def -override -docstring 'search word inside buffer' -params 1 \
         echo "$(echo ${FUN}| cut -d: -f 1)g"
       fi
 }}
+
+hook global WinSetOption filetype=rust %{
+    set window formatcmd 'rustfmt'
+}
+
+
+
 
 #--preview="tail -n +{2} {1}"
 #      FILE=$(fd -t file $FROM | fzf-tmux --reverse --exact --preview='highlight -O ansi --force {} | head -n 100')

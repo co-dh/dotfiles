@@ -21,7 +21,10 @@ lat: 42.605 20 10f
 lon: -5.539 -75 -10f
 precision: 5 /number of chars in result
 g: 10000000 /0.1billian
-show lat: -90+g?180f
-show lon: -180+g?360f
-\t encode[lat; lon; precision]
+lat: -90+g?180f
+lon: -180+g?360f
+/\t encode[lat; lon; precision]
 /3.5s / million 
+encode[48.669; -4.329; 5] like "gbsuv"
+encode[48.669; -4.329; 9] like "gbsuv7ztq"
+encode[48.669; -4.329; 5] like "gbsuv"
