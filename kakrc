@@ -15,12 +15,13 @@ map global normal * <a-i>w*
 map global normal f <c-s>f
 map global normal v <a-i>
 
-map global normal h m 
-map global normal j n 
-map global normal k e   
-map global normal m h
-map global normal n j
-map global normal e k
+# When I don't have ErgoDox
+#map global normal h m 
+#map global normal j n 
+#map global normal k e   
+#map global normal m h
+#map global normal n j
+#map global normal e k
 
 #map global normal i l
 #map global normal l i 
@@ -91,17 +92,19 @@ map -docstring 'git'        global user g :enter-user-mode<space>git<ret>
 map -docstring 'blame'      global git b :git<space>blame<ret>
 map -docstring 'hide-blame' global git B :git<space>hide-blame<ret>
 map -docstring 'status'     global git s :git<space>status<ret>
-map -docstring 'checkout'   global git c :git<space>checkout<space>
+map -docstring 'commit'     global git c :git<space>commit<space>-m<space>
+map -docstring 'checkout'   global git C :git<space>checkout<space>
 map -docstring 'diff'       global git d :git<space>diff<ret>
 map -docstring 'log'        global git l :git<space>log<ret>
 map -docstring 'cd root'    global git r :gitroot<ret>
+map -docstring 'blame'      global git a :git<space>add<space>
 
 
 define-command -override rcd -docstring "relative cd to current buffer" %{cd %sh{dirname ${kak_reg_percent} | tr --delete "'"}; pwd}
 declare-user-mode toggle
 map -docstring 'toggle/test'    global user t :enter-user-mode<space>toggle<ret>
-map -docstring 'line off'       global toggle T :<space>rmhl<space>window/mynumber<ret>
-map -docstring 'line on'        global toggle t :addhl<space>window/mynumber<space>number-lines<space>-relative<space>-hlcursor<ret>
+map -docstring 'line off'       global toggle T :<space>rmhl<space>window/line<ret>
+map -docstring 'line on'        global toggle t :addhl<space>window/line<space>number-lines<space>-relative<space>-hlcursor<ret>
 map -docstring 'pwd'            global toggle p :pwd<ret>
 map -docstring 'rcd'            global toggle c :rcd<ret>
 map -docstring 'lint'           global toggle l :lint<ret>
@@ -127,10 +130,11 @@ def -override -docstring 'search word inside buffer' -params 1 \
 }}
 
 #--preview="tail -n +{2} {1}"
-
+#      FILE=$(fd -t file $FROM | fzf-tmux --reverse --exact --preview='highlight -O ansi --force {} | head -n 100')
+      
 def -override -docstring 'grep in current folder' -params 1.. \
   fzf-grep %{eval %sh{
-      FILE=$(rg --color always -n "$@" | fzf-tmux --exact --no-sort --ansi --delimiter=: --layout=reverse )
+      FILE=$(rg --color always -n "$@" | fzf-tmux --exact --no-sort --ansi --delimiter=: --layout=reverse --preview="highlight -O ansi --force {1} | tail -n +{2}")
       if [ -n "$FILE" ]; then
         echo "$(echo "edit -existing ${FILE}"| cut -d: -f 1,2 | tr : " ")"
       fi
