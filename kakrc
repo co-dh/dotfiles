@@ -151,5 +151,7 @@ def -override -docstring 'grep in current folder' -params 1.. \
 #remove-hooks global resize
 set-face global search +bi
 add-highlighter global/search dynregex '%reg{/}' 0:search
-#
-#
+
+hook global BufCreate .*\.nasm$ %{
+    set-option buffer filetype gas
+}
