@@ -1,7 +1,7 @@
 
 # Detection
 
-hook global BufCreate .*\.(q) %{
+hook global BufCreate .*\.(q|k) %{
     set-option buffer filetype q
 }
 rmhl shared/q
@@ -62,7 +62,7 @@ evaluate-commands %sh<
     # Highlight keywords
     printf %s "
         add-highlighter shared/q/code/ regex '\b(${keywords})\b' 0:keyword
-        add-highlighter shared/q/code/ regex '^\s*([a-zA-Z]\w*)\s*:\s*\{' 1:function
+        add-highlighter shared/q/code/ regex '([a-zA-Z]\w*)\s*:\s*\{' 1:function
     "
 >
 

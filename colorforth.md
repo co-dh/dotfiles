@@ -108,3 +108,12 @@ qdup: ;"?dup", add dup is previous is not drop. if (list == h-1) and *(h-1) == 0
 
 dump (a)
 
+begin: here
+end: jmp to begin 
+loop 1, here - + 1, ; 
+if 74 2, here ; jz
+then: ; *(eax-1) =  h - eax . fill address after then to previous jump target 
+while: n-nn if swap ; 
+
+begin {cond} while {loop} end {??} then {rest}
+    h        if swap

@@ -9,6 +9,7 @@ map global normal <space> ,
 map global normal , <space> 
 map global normal <c-l> '<c-s><a-x><a-;>Gi:tmux-send-text<ret>j'
 map global insert <c-l> '<esc><a-x><a-;>Gi:tmux-send-text<ret>jghi'
+map global insert <c-t> '<esc><c-s><a-x><a-;>Gi:send-text<ret><c-o>i'
 map global insert <c-a> <home>
 map global insert <c-e> <end>
 map global normal * <a-i>w*
@@ -33,7 +34,6 @@ evaluate-commands %sh{
     fi
 }
 
-#addhl global/ show_matching 
 #addhl global/ column 120 Error
 
 map -docstring 'command'               global user <space> :
@@ -45,6 +45,7 @@ map -docstring 'reload q'              global user L :<space>write<ret>:<space>t
 map -docstring 'send select + ret'     global user l :tmux-send-text<ret><c-s>ghh:send-text<ret><c-o>
 #map -docstring '.head()'              global user h <a-i>w:<space>tmux-send-text<space><c-r>..head()<ret>gll:send-text<ret>
 map -docstring 'repl-ver'              global user v :tmux-repl-vertical<ret>
+map -docstring 'make'                  global user m :make<ret>
 map -docstring 'grep-next-match'       global user n :<space>grep-next-match<ret>
 map -docstring 'grep-previous-match'   global user N :<space>grep-previous-match<ret>
 map -docstring 'Project'               global user p :fzf-file<ret>
