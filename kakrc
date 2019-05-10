@@ -9,6 +9,7 @@ map global normal <space> ,
 map global normal , <space> 
 map global normal <c-l> '<c-s><a-x><a-;>Gi:tmux-send-text<ret>j'
 map global insert <c-l> '<esc><a-x><a-;>Gi:tmux-send-text<ret>jghi'
+map global normal <c-t> '<c-s><a-x><a-;>Gi:send-text<ret><c-o>i'
 map global insert <c-t> '<esc><c-s><a-x><a-;>Gi:send-text<ret><c-o>i'
 map global insert <c-a> <home>
 map global insert <c-e> <end>
