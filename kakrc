@@ -2,13 +2,15 @@ hook global WinSetOption filetype=python %{
     set global lintcmd kak_pylint
     lint-enable
 }
-        
+
 
 set global grepcmd 'rg --column'
 map global normal <space> ,
-map global normal , <space> 
+map global normal , <space>
 map global normal <c-l> '<c-s><a-x><a-;>Gi:tmux-send-text<ret>j'
 map global insert <c-l> '<esc><a-x><a-;>Gi:tmux-send-text<ret>jghi'
+map global normal <c-t> '<c-s><a-x><a-;>Gi:send-text<ret><c-o>i'
+map global insert <c-t> '<esc><c-s><a-x><a-;>Gi:send-text<ret><c-o>i'
 map global insert <c-a> <home>
 map global insert <c-e> <end>
 map global normal * <a-i>w*
@@ -16,9 +18,9 @@ map global normal f <c-s>f
 map global normal v <a-i>
 
 # When I don't have ErgoDox
-#map global normal h m 
-#map global normal j n 
-#map global normal k e   
+#map global normal h m
+#map global normal j n
+#map global normal k e
 #map global normal m h
 #map global normal n j
 #map global normal e k
@@ -33,11 +35,10 @@ evaluate-commands %sh{
     fi
 }
 
-#addhl global/ show_matching 
 #addhl global/ column 120 Error
 
 map -docstring 'command'               global user <space> :
-map -docstring 'cpp-alternative-file'  global user a :cpp-alternative-file<ret> 
+map -docstring 'cpp-alternative-file'  global user a :cpp-alternative-file<ret>
 map -docstring 'align by | '           global user | s\|<ret>&
 map -docstring 'load q block'          global user B <a-i>p<a-|>dd<space>of=/lxhome/denghao/tmp/dh.q<ret>:send-text<space>'\l<space>/lxhome/denghao/tmp/dh.q'<ret>ghh:send-text<ret>
 map -docstring 'switch buffer'         global user b :fzf-buffer<ret>
@@ -47,6 +48,8 @@ map -docstring 'search'                global user f :fzf-search<space><c-r>.<re
 map -docstring 'kill buffer'           global user k :<space>db<ret>
 map -docstring 'reload q'              global user L :<space>write<ret>:<space>tmux-send-text<space>'\l<space><c-r>%'<ret>gll:send-text<ret>
 map -docstring 'send select + ret'     global user l :tmux-send-text<ret><c-s>ghh:send-text<ret><c-o>
+map -docstring 'repl-ver'              global user v :tmux-repl-vertical<ret>
+map -docstring 'make'                  global user m :make<ret>
 map -docstring 'grep-next-match'       global user n :<space>grep-next-match<ret>
 map -docstring 'grep-previous-match'   global user N :<space>grep-previous-match<ret>
 map -docstring 'Project'               global user p :fzf-file<ret>
@@ -54,9 +57,9 @@ map -docstring 'Open file in git'      global user P :fzf-file<space>1<ret>
 map -docstring 'write buffer'          global user w :<space>w<ret>
 map -docstring 'grep'                  global user / :fzf-grep<space>
 #map -docstring 'grep buffer'           global user G :grep<space>-wg<space><c-r>%<space><c-r>.<ret>
-map -docstring 'plan grep word. '      global user G <a-i>w:grep<space>-w<space><c-r>.<ret> 
-map -docstring 'grep word'             global user * <a-i>w:fzf-grep<space>-w<space><c-r>.<ret> 
-map -docstring 'quit'                  global user q :q<ret> 
+map -docstring 'plan grep word. '      global user G <a-i>w:grep<space>-w<space><c-r>.<ret>
+map -docstring 'grep word'             global user * <a-i>w:fzf-grep<space>-w<space><c-r>.<ret>
+map -docstring 'quit'                  global user q :q<ret>
 map -docstring 'repl-ver'              global user v :tmux-repl-vertical<ret>
 map -docstring 'new-vert'              global user V :tmux-terminal-vertical<space>kak<space>-c<space>%val{session}<ret>
 
@@ -83,7 +86,7 @@ hook global BufCreate .*/?mk %{
 
 def  -override -params 0..1 -docstring 'invoke fzf to open a file. If any argument, open from git room' \
   fzf-file %{eval %sh{
-      if [ $# -ne 0 ]; then  
+      if [ $# -ne 0 ]; then
           FROM=" . $(git rev-parse --show-toplevel)"
       fi
       FILE=$(fd -t file $FROM | fzf-tmux --reverse --exact --preview='highlight -O ansi --force {} | head -n 100')
@@ -94,7 +97,7 @@ def  -override -params 0..1 -docstring 'invoke fzf to open a file. If any argume
 
 define-command -override gitroot %{cd %sh(git rev-parse --show-toplevel); pwd}
 declare-user-mode git
-map -docstring 'git'        global user g :enter-user-mode<space>git<ret> 
+map -docstring 'git'        global user g :enter-user-mode<space>git<ret>
 map -docstring 'blame'      global git b :git<space>blame<ret>
 map -docstring 'hide-blame' global git B :git<space>hide-blame<ret>
 map -docstring 'status'     global git s :git<space>status<ret>
@@ -138,7 +141,7 @@ hook global WinSetOption filetype=rust %{
     set window formatcmd 'rustfmt'
 }
 
-    
+
 def -override -docstring 'grep in current folder' -params 1.. \
   fzf-grep %{eval %sh{
       FILE=$(rg --color always -n "$@" | fzf-tmux --exit-0 --exact --no-sort --ansi --delimiter=: --layout=reverse --preview="highlight -O ansi --force {1} | tail -n +{2}")
@@ -152,7 +155,7 @@ def -override -docstring 'grep in current folder' -params 1.. \
 #remove-hooks global resize
 set-face global search +bi
 add-highlighter global/search dynregex '%reg{/}' 0:search
-#
-#
 
-#
+hook global BufCreate .*\.nasm$ %{
+    set-option buffer filetype gas
+}
