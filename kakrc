@@ -29,7 +29,7 @@ evaluate-commands %sh{
     if [ -z "$TMUX" ]; then
         echo ""
     else
-        echo "colorscheme solarized-light"
+        echo "colorscheme github"
     fi
 }
 
@@ -37,26 +37,28 @@ evaluate-commands %sh{
 #addhl global/ column 120 Error
 
 map -docstring 'command'               global user <space> :
-map -docstring 'load q block'          global user B <a-i>p<a-|>dd<space>of=/tmp/dh.q<ret>:send-text<space>'\l<space>/tmp/dh.q'<ret>ghh:send-text<ret>
+map -docstring 'cpp-alternative-file'  global user a :cpp-alternative-file<ret> 
+map -docstring 'align by | '           global user | s\|<ret>&
+map -docstring 'load q block'          global user B <a-i>p<a-|>dd<space>of=/lxhome/denghao/tmp/dh.q<ret>:send-text<space>'\l<space>/lxhome/denghao/tmp/dh.q'<ret>ghh:send-text<ret>
 map -docstring 'switch buffer'         global user b :fzf-buffer<ret>
+map -docstring 'ctags-search'          global user c :ctags-search<ret>
 map -docstring 'Eval in Kak'           global user e :<space><c-r>.<ret>
+map -docstring 'search'                global user f :fzf-search<space><c-r>.<ret>
 map -docstring 'kill buffer'           global user k :<space>db<ret>
 map -docstring 'reload q'              global user L :<space>write<ret>:<space>tmux-send-text<space>'\l<space><c-r>%'<ret>gll:send-text<ret>
 map -docstring 'send select + ret'     global user l :tmux-send-text<ret><c-s>ghh:send-text<ret><c-o>
-#map -docstring '.head()'              global user h <a-i>w:<space>tmux-send-text<space><c-r>..head()<ret>gll:send-text<ret>
-map -docstring 'repl-ver'              global user v :tmux-repl-vertical<ret>
 map -docstring 'grep-next-match'       global user n :<space>grep-next-match<ret>
 map -docstring 'grep-previous-match'   global user N :<space>grep-previous-match<ret>
 map -docstring 'Project'               global user p :fzf-file<ret>
-map -docstring 'search'                global user f :fzf-search<space><c-r>.<ret>
 map -docstring 'Open file in git'      global user P :fzf-file<space>1<ret>
 map -docstring 'write buffer'          global user w :<space>w<ret>
 map -docstring 'grep'                  global user / :fzf-grep<space>
-map -docstring 'grep buffer'           global user G :grep<space>-wg<space><c-r>%<space><c-r>.<ret>
-#map -docstring 'grep word'             global user * <a-i>w:grep<space>-w<space><c-r>.<ret> 
-map -docstring 'grep word'             global user * <a-i>w:fzf-grep<space><c-r>.<ret> 
+#map -docstring 'grep buffer'           global user G :grep<space>-wg<space><c-r>%<space><c-r>.<ret>
+map -docstring 'plan grep word. '      global user G <a-i>w:grep<space>-w<space><c-r>.<ret> 
+map -docstring 'grep word'             global user * <a-i>w:fzf-grep<space>-w<space><c-r>.<ret> 
 map -docstring 'quit'                  global user q :q<ret> 
-map -docstring 'tmux-repl-vertical'    global user q :q<ret> 
+map -docstring 'repl-ver'              global user v :tmux-repl-vertical<ret>
+map -docstring 'new-vert'              global user V :tmux-terminal-vertical<space>kak<space>-c<space>%val{session}<ret>
 
 hook global InsertChar \t %{ exec -draft h@ }
 
@@ -69,6 +71,7 @@ def sel-trailing-space -override %{exec '%s\h+$<ret>'}
 hook -group UnCursor global InsertBegin .* %{ face window PrimaryCursor +u;                    addhl window/ws show-whitespaces -spc ' '}
 hook -group UnCursor global InsertEnd   .* %{ face window PrimaryCursor rgb:002b36,rgb:839496; rmhl window/ws}
 
+# To tell which window is focused.
 hook global FocusIn .*  %{ addhl window/line number-lines -relative -hlcursor}
 hook global FocusOut .* %{ rmhl window/line}
 
@@ -116,17 +119,16 @@ map -docstring 'next error'     global toggle n :lint-next-error<ret>
 
 def -override -docstring 'invoke fzf to select a buffer' \
   fzf-buffer %{eval %sh{
-      BUFFER=$(printf %s\\n ${kak_buflist} | sed "s/'//g" |fzf-tmux --reverse --exact -d 15)
+      BUFFER=$(printf %s\\n ${kak_buflist} | sed "s/'//g" |fzf-tmux --reverse --exact -d 15 )
       if [ -n "$BUFFER" ]; then
         echo buffer ${BUFFER}
       fi
 }}
 
-#--preview= "sh -c 'tail -n +{1} ${kak_buffile}'"
 def -override -docstring 'search word inside buffer' -params 1 \
   fzf-search %{execute-keys %sh{
       export FILE=${kak_buffile}
-      FUN=$(grep --color=always -nE $1 ${kak_buffile} | fzf-tmux --ansi --delimiter=: --exact --no-sort --reverse )
+      FUN=$(grep --color=always -nE $1 ${kak_buffile} | fzf-tmux --ansi --delimiter=: --exact --no-sort --reverse --preview="highlight -O ansi --force ${kak_buffile} | tail -n +{1}")
       if [ -n "$FUN" ]; then
         echo "$(echo ${FUN}| cut -d: -f 1)g"
       fi
@@ -136,15 +138,10 @@ hook global WinSetOption filetype=rust %{
     set window formatcmd 'rustfmt'
 }
 
-
-
-
-#--preview="tail -n +{2} {1}"
-#      FILE=$(fd -t file $FROM | fzf-tmux --reverse --exact --preview='highlight -O ansi --force {} | head -n 100')
-      
+    
 def -override -docstring 'grep in current folder' -params 1.. \
   fzf-grep %{eval %sh{
-      FILE=$(rg --color always -n "$@" | fzf-tmux --exact --no-sort --ansi --delimiter=: --layout=reverse --preview="highlight -O ansi --force {1} | tail -n +{2}")
+      FILE=$(rg --color always -n "$@" | fzf-tmux --exit-0 --exact --no-sort --ansi --delimiter=: --layout=reverse --preview="highlight -O ansi --force {1} | tail -n +{2}")
       if [ -n "$FILE" ]; then
         echo "$(echo "edit -existing ${FILE}"| cut -d: -f 1,2 | tr : " ")"
       fi
@@ -156,4 +153,6 @@ def -override -docstring 'grep in current folder' -params 1.. \
 set-face global search +bi
 add-highlighter global/search dynregex '%reg{/}' 0:search
 #
+#
+
 #
