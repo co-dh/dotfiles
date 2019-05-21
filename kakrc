@@ -68,7 +68,7 @@ set-option global toolsclient tools
 set-option global docsclient docs
 def sel-trailing-space -override %{exec '%s\h+$<ret>'}
 
-hook -group UnCursor global InsertBegin .* %{ face window PrimaryCursor +u;                    addhl window/ws show-whitespaces -spc ' '}
+hook -group UnCursor global InsertBegin .* %{ face window PrimaryCursor +u;  addhl window/ws show-whitespaces -spc ' '}
 hook -group UnCursor global InsertEnd   .* %{ face window PrimaryCursor rgb:002b36,rgb:839496; rmhl window/ws}
 
 # To tell which window is focused.
@@ -105,26 +105,31 @@ map -docstring 'log'        global git l :git<space>log<ret>
 map -docstring 'cd root'    global git r :gitroot<ret>
 map -docstring 'add'        global git a :git<space>add<space>
 
-map global normal <c-l> '<c-s><a-x><a-;>Gi:tmux-send-text<ret>j'
-map global insert <c-l> '<esc><a-x><a-;>Gi:tmux-send-text<ret>jghi'
-map global normal <c-l> ':send-line<ret>'
 
 define-command -override send-line %{ execute-keys <c-s><a-x>:tmux-send-text<ret><c-o> }
+map global insert <c-l> '<esc><a-x><a-;>Gi:tmux-send-text<ret>jghi'
+map global normal <c-l> ':send-line<ret>j'
+
 define-command -override -params 1 send-word %{ execute-keys i %arg{1} <space><esc>:send-line<ret>gi }
 declare-user-mode kk
 map -docstring 'kk' global normal k :enter-user-mode<space>-lock<space>kk<ret>
 
-map -docstring 'dup'    global kk d :send-word<space>dup<ret> 
-map -docstring 'enlist' global kk , :send-word<space>enlist<ret> 
 map -docstring 'count'  global kk c :send-word<space>count<ret> 
-map -docstring 'Each'   global kk \' iEach[<esc>ea]<esc><a-b>:send-line<ret>gi;
+map -docstring 'dup'    global kk d :send-word<space>dup<ret> 
+map -docstring 'drop'   global kk D :send-word<space>drop<ret> 
 map -docstring 'Group'  global kk g :send-word<space>Group<ret>
+map -docstring 'swap'   global kk s :send-word<space>swap<ret>
+map -docstring 'Min'    global kk m :send-word<space>Min<ret>
+map -docstring 'u'      global kk u u:send-line<ret>
+map -docstring 'enlist' global kk , :send-word<space>enlist<ret> 
 map -docstring 'idesc'  global kk > :send-word<space>Idesc<ret>
 map -docstring 'First'  global kk 0 :send-word<space>First<ret>
 map -docstring '='      global kk = :send-word<space>Eq<ret>
 map -docstring 'where'  global kk & :send-word<space>Where<ret>
-map -docstring 'swap'   global kk s :send-word<space>swap<ret>
 map -docstring '@'      global kk @ :send-word<space>At<ret>
+map -docstring 'Each'   global kk \' iEach[<esc>ea]<esc><a-b>:send-line<ret>gi;
+map -docstring 'Prior'  global kk P 'iPrior[<esc>f ;i]<esc><a-b>:send-line<ret>gi;'
+
 
 def -override rcd -docstring "cd to current buffer" %{cd %sh{dirname ${kak_reg_percent} | tr --delete "'"}; pwd}
 declare-user-mode toggle
