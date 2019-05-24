@@ -9,8 +9,8 @@ map global normal <space> ,
 map global normal , <space>
 map global normal <c-l> '<c-s><a-x><a-;>Gi:tmux-send-text<ret>j'
 map global insert <c-l> '<esc><a-x><a-;>Gi:tmux-send-text<ret>jghi'
-map global normal <c-t> '<c-s><a-x><a-;>Gi:send-text<ret><c-o>i'
-map global insert <c-t> '<esc><c-s><a-x><a-;>Gi:send-text<ret><c-o>i'
+map global normal <c-e> '<c-s><a-x><a-;>Gi:send-text<ret><c-o>i'
+map global insert <c-e> '<esc><c-s><a-x><a-;>Gi:send-text<ret><c-o>i'
 map global insert <c-a> <home>
 map global insert <c-e> <end>
 map global normal * <a-i>w*
@@ -62,6 +62,7 @@ map -docstring 'grep word'             global user * <a-i>w:fzf-grep<space>-w<sp
 map -docstring 'quit'                  global user q :q<ret>
 map -docstring 'repl-ver'              global user v :tmux-repl-vertical<ret>
 map -docstring 'new-vert'              global user V :tmux-terminal-vertical<space>kak<space>-c<space>%val{session}<ret>
+map -docstring 'underline'             global user u 'xypjx_s.<ret>r- /xxx<ret><esc>'
 
 hook global InsertChar \t %{ exec -draft h@ }
 
