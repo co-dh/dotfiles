@@ -7,7 +7,7 @@ function ff
     switch $cmd
     	case 'right *'
         	eval (echo $cmd | sed 's|right \(.*\)|cd \1 2>/dev/null |')
-        	ff
+        	#ff
         case 'left *'
             cd .. 2>/dev/null 
             ff
