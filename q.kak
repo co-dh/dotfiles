@@ -36,7 +36,7 @@ hook -group q-highlight global WinSetOption filetype=q %{ add-highlighter window
 hook -group q-highlight global WinSetOption filetype=(?!q).* %{ remove-highlighter window/q }
 
 evaluate-commands %sh<
-    keywords="abs|acos|asin|atan|avg|bin|binr|cor|cos|cov"
+    keywords="abs|acos|asin|atan|avg|bin|by|binr|cor|cos|cov"
     keywords="${keywords}|delete|dev|div|do|enlist|exec|exit|exp|getenv|if"
     keywords="${keywords}|in|insert|last|like|log|max|min|prd|select|setenv"
     keywords="${keywords}|sin|sqrt|ss|sum|tan|update|var|wavg|while|within"

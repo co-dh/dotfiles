@@ -6,8 +6,8 @@ hook global WinSetOption filetype=python %{
 set global grepcmd 'rg --column'
 map global normal <space> ,
 map global normal , <space>
-map global normal <c-t> '<c-s><a-x><a-;>Gi:send-text<ret><c-o>i'
-map global insert <c-t> '<esc><c-s><a-x><a-;>Gi:send-text<ret><c-o>i'
+map global normal <c-l> '<c-s><a-x><a-;>Gi:tmux-send-text<ret>j'
+map global insert <c-l> '<esc><a-x><a-;>Gi:tmux-send-text<ret>jghi'
 map global insert <c-a> <home>
 map global insert <c-e> <end>
 map global normal * <a-i>w*
@@ -32,7 +32,7 @@ evaluate-commands %sh{
     fi
 }
 
-addhl global/ column 120 Error
+#addhl global/ column 120 Error
 
 map -docstring 'command'               global user <space> :
 map -docstring 'cpp-alternative-file'  global user a :cpp-alternative-file<ret>
@@ -59,6 +59,7 @@ map -docstring 'grep word'             global user * <a-i>w:fzf-grep<space>-w<sp
 map -docstring 'quit'                  global user q :q<ret>
 map -docstring 'repl-ver'              global user v :tmux-repl-vertical<ret>
 map -docstring 'new-vert'              global user V :tmux-terminal-vertical<space>kak<space>-c<space>%val{session}<ret>
+map -docstring 'underline'             global user u 'xypjx_s.<ret>r- /xxx<ret><esc>'
 
 hook global InsertChar \t %{ exec -draft h@ }
 
@@ -75,6 +76,7 @@ hook -group UnCursor global InsertEnd   .* %{ face window PrimaryCursor rgb:002b
 hook global FocusIn .*  %{ addhl window/line number-lines -relative -hlcursor}
 hook global FocusOut .* %{ rmhl window/line}
 
+remove-highlighter global/match
 add-highlighter global/match  show-matching
 
 hook global BufCreate .*/?mk %{
@@ -94,16 +96,20 @@ def  -override -params 0..1 -docstring 'invoke fzf to open a file. If any argume
 
 define-command -override gitroot %{cd %sh(git rev-parse --show-toplevel); pwd}
 declare-user-mode git
+
 map -docstring 'git'        global user g :enter-user-mode<space>-lock<space>git<ret>
+map -docstring 'add'        global git a :git<space>add<space>
 map -docstring 'blame'      global git b :git<space>blame<ret>
 map -docstring 'hide-blame' global git B :git<space>hide-blame<ret>
 map -docstring 'status'     global git s :git<space>status<ret>
 map -docstring 'commit'     global git c :git<space>commit<space>-m<space>
-map -docstring 'checkout'   global git C :git<space>checkout<space>
+map -docstring 'checkout'   global git C ghww:git<space>checkout<space><c-r>.<ret>
 map -docstring 'diff'       global git d :git<space>diff<space>
 map -docstring 'log'        global git l :git<space>log<ret>
 map -docstring 'cd root'    global git r :gitroot<ret>
-map -docstring 'add'        global git a :git<space>add<space>
+map -docstring 'pull'       global git p ge<a-!>git<space>pull<ret>
+map -docstring 'push'       global git P ge<a-!>git<space>push<ret>
+map -docstring 'branch'     global git h ge!git<space>branch<ret>
 
 
 define-command -override send-line %{ execute-keys <c-s><a-x>:tmux-send-text<ret><c-o> }
