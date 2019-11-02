@@ -1,2 +1,2 @@
 #!/bin/sh
-find . -type f | fzf --exact --preview='head -n 100 {}' --bind 'enter:execute(vf {} </dev/tty)'
+vf $(find . -type f -not -path '*/.git*' | fzf --exact --preview='head -n 100 {}' )

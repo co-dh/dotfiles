@@ -73,8 +73,8 @@ hook -group UnCursor global InsertBegin .* %{ face window PrimaryCursor +u;  add
 hook -group UnCursor global InsertEnd   .* %{ face window PrimaryCursor rgb:002b36,rgb:839496; rmhl window/ws}
 
 # To tell which window is focused.
-hook global FocusIn .*  %{ addhl window/line number-lines -relative -hlcursor}
-hook global FocusOut .* %{ rmhl window/line}
+#hook global FocusIn .*  %{ addhl window/line number-lines -relative -hlcursor}
+#hook global FocusOut .* %{ rmhl window/line}
 
 remove-highlighter global/match
 add-highlighter global/match  show-matching
