@@ -1,0 +1,2 @@
+#!/bin/sh
+grep -nH . $1 | fzf --exact --no-sort --reverse --delimiter=: --preview="tail -n +{2} {1}" --bind 'enter:execute(kak +{2} {1} </dev/tty)'
