@@ -1,0 +1,2 @@
+#!/bin/sh
+vf $(find . -type f -not -path '*/.git*' | fzf --exact --preview='head -n 100 {}' )

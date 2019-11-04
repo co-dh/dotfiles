@@ -1,0 +1,3 @@
+#!/bin/sh
+a=$(git status --porcelain | grep '^ M ' | fzf --delimiter ' ' --preview 'git diff {3}' | sed 's/^ M //g')
+test ! -z "$a" && (git add $a ; ggs)
