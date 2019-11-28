@@ -1,7 +1,10 @@
 
 # Detection
-
 hook global BufCreate .*\.(q|k) %{
+    set-option buffer filetype q
+}
+
+hook global BufCreate .*\.q.in %{
     set-option buffer filetype q
 }
 
@@ -53,7 +56,7 @@ evaluate-commands %sh<
     keywords="${keywords}|views|cols|xcols|keys|xkey|xcol|xasc|xdesc|fkeys|meta"
     keywords="${keywords}|lj|ljf|aj|aj0|ij|ijf|pj|asof|uj|ujf"
     keywords="${keywords}|ww|wj|wj1|fby|xgroup|ungroup|ej|save|load|rsave"
-    keywords="${keywords}|rload|dsave|show|csv|parse|eval|reval|from"
+    keywords="${keywords}|rload|dsave|show|csv|parse|eval|reval|from|;"
 
     # Add the language's grammar to the static completion list
     printf %s\\n "hook global WinSetOption filetype=q %{
@@ -64,6 +67,8 @@ evaluate-commands %sh<
     printf %s "
         add-highlighter shared/q/code/ regex '\b(${keywords})\b' 0:keyword
         add-highlighter shared/q/code/ regex '([a-zA-Z]\w*)\s*:\s*\{' 1:function
+        add-highlighter shared/q/code/ regex '(;)' 0:keyword
+        add-highlighter shared/q/code/ regex '(\`[.:a-zA-Z0-9/]*))' 0:type
     "
 >
 
