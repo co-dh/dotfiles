@@ -68,7 +68,7 @@ evaluate-commands %sh<
         add-highlighter shared/q/code/ regex '\b(${keywords})\b' 0:keyword
         add-highlighter shared/q/code/ regex '([a-zA-Z]\w*)\s*:\s*\{' 1:function
         add-highlighter shared/q/code/ regex '(;)' 0:keyword
-        add-highlighter shared/q/code/ regex '(\`[.:a-zA-Z0-9/]*))' 0:type
+        add-highlighter shared/q/code/ regex '(\`[.:_a-zA-Z0-9/]*))' 0:type
     "
 >
 

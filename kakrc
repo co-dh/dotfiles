@@ -30,7 +30,7 @@ evaluate-commands %sh{
     if [ -z "$TMUX" ]; then
         echo ""
     else
-        echo "colorscheme seagull"
+        echo "colorscheme dracula"
     fi
 }
 
