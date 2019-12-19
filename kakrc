@@ -30,7 +30,7 @@ evaluate-commands %sh{
     if [ -z "$TMUX" ]; then
         echo ""
     else
-        echo "colorscheme dracula"
+        echo "colorscheme solarized-dark"
     fi
 }
 
@@ -74,8 +74,9 @@ set-option global toolsclient tools
 set-option global docsclient docs
 def sel-trailing-space -override %{exec '%s\h+$<ret>'}
 
-hook -group UnCursor global InsertBegin .* %{ face window PrimaryCursor +u;  addhl window/ws show-whitespaces -spc ' '}
-hook -group UnCursor global InsertEnd   .* %{ face window PrimaryCursor rgb:002b36,rgb:839496; rmhl window/ws}
+
+hook global ModeChange push:normal:insert %{ face window PrimaryCursor +u;  addhl window/ws show-whitespaces -spc ' '}
+hook global ModeChange  pop:insert:normal %{ face window PrimaryCursor rgb:002b36,rgb:839496; rmhl window/ws}
 
 # To tell which window is focused.
 #hook global FocusIn .*  %{ addhl window/line number-lines -relative -hlcursor}
@@ -91,9 +92,11 @@ hook global BufCreate .*/?mk %{
 def  -override -params 0..1 -docstring 'invoke fzf to open a file. If any argument, open from git room' \
   fzf-file %{eval %sh{
       if [ $# -ne 0 ]; then
-          FROM=" . $(git rev-parse --show-toplevel)"
+          FROM=" $(git rev-parse --show-toplevel)"
+      else
+          FROM=.
       fi
-      FILE=$(fd -t file $FROM | fzf-tmux --reverse --exact --preview='less {} ')
+      FILE=$(find $FROM -type f| fzf-tmux --reverse --exact --preview='less {} ')
       #FILE=$(fd -t file $FROM | fzf-tmux --reverse --exact --preview='highlight -O ansi --force {} | head -n 100')
       if [ -n "$FILE" ]; then
         printf 'edit %%{%s}' "${FILE}"
@@ -183,18 +186,5 @@ def -override -docstring 'send \ return to tmux pane' \
   tmux-send-slash %{eval %sh{
       printf 'tmux-send-text "\\"'
 }}
-
-define-command -hidden -override tmux-send-text -params 0..1 -docstring "tmux-send-text [text]: Send text to the REPL pane.
-  If no text is passed, then the selection is used" %{
-    nop %sh{
-        if [ $# -eq 0 ]; then
-            tmux set-buffer -b kak_selection -- "${kak_selection}"
-        else
-            tmux set-buffer -b kak_selection -- "$1"
-        fi
-        tmux paste-buffer -b kak_selection -t "$kak_opt_tmux_repl_id"
-    }
-}
-
 
 map global insert <c-s>  'select from where<esc>bi   <left><left>'
