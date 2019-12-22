@@ -49,7 +49,7 @@ map -docstring 'kill'                  global user K :<space>kill<ret>
 map -docstring 'reload q'              global user L :<space>write<ret>:<space>tmux-send-text<space>'\l<space><c-r>%'<ret>gll:send-text<ret>
 map -docstring 'send select + ret'     global user l :tmux-send-text<ret>:tmux-send-line<ret>
 map -docstring 'repl-ver'              global user v :tmux-repl-vertical<ret>
-map -docstring 'make'                  global user m :make<ret>
+map -docstring 'make'                  global user m :wa<ret>:make<ret>
 map -docstring 'grep-next-match'       global user n :<space>grep-next-match<ret>
 map -docstring 'grep-previous-match'   global user N :<space>grep-previous-match<ret>
 map -docstring 'Project'               global user p :fzf-file<ret>
