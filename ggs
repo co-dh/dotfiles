@@ -1,3 +1,5 @@
 #!/bin/sh
+pushd $(git rev-parse --show-toplevel)
 a=$(git status --porcelain | grep '^.M ' | fzf --delimiter ' ' --preview 'git -c color.ui=always diff {-1}' | sed 's/^.M //g')
 test ! -z "$a" && (git add $a ; ggs)
+popd

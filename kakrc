@@ -42,6 +42,8 @@ map -docstring 'align by | '           global user | s\|<ret>&
 map -docstring 'load q block'          global user B <a-i>p<a-|>dd<space>of=/lxhome/denghao/tmp/dh.q<ret>:tmux-send-text<space>'\l<space>/lxhome/denghao/tmp/dh.q'<ret>ghh:tmux-send-text<ret>
 map -docstring 'switch buffer'         global user b :fzf-buffer<ret>
 map -docstring 'ctags-search'          global user c :ctags-search<ret>
+map -docstring 'escape'                global user e :tmux-send-slash<ret>:tmux-send-line<ret>
+map -docstring 'escape'                global user d :tmux-send-text<space>"echo<space>$"<ret>:tmux-send-text<ret>:tmux-send-line<ret>
 map -docstring 'Eval in Kak'           global user E :<space><c-r>.<ret>
 map -docstring 'search'                global user f :fzf-search<space>'<c-r>.'<ret>
 map -docstring 'kill buffer'           global user k :<space>db<ret>
@@ -64,7 +66,6 @@ map -docstring 'repl-ver'              global user v :tmux-repl-vertical<ret>
 map -docstring 'new-vert'              global user V :tmux-terminal-vertical<space>kak<space>-c<space>%val{session}<ret>
 map -docstring 'underline -'           global user u 'xypjx_s.<ret>r- /xxx<ret><esc>'
 map -docstring 'underline ='           global user = 'xypjx_s.<ret>r= /xxx<ret><esc>'
-map -docstring 'escape'                global user e :tmux-send-slash<ret>:tmux-send-line<ret>
 
 hook global InsertChar \t %{ exec -draft h@ }
 
