@@ -1,2 +1,2 @@
 #!/bin/sh
-vf $(find . -type f -not -path '*/.git*' | fzf -e --preview='head -n 100 {}' )
+vf $(find ${1:-.} -type f -not -path '*/.git*' | fzf -e --preview='head -n 100 {}' )
