@@ -1,7 +1,7 @@
 #!/bin/sh
 a=$(git log --graph --color=always --format="%C(auto)%h %ci %d[%an] %s " "$@" |\
  fzf --exact --ansi --no-sort --reverse --tiebreak=index --preview "echo {} |\
- grep -o '[a-f0-9]\{7\}' | xargs -I 'xXyYzZfoo' git show xXyYzZfoo -- $@ | diff-so-fancy ")
+ grep -o '[a-f0-9]\{7\}' | xargs -I 'xXyYzZfoo' git show -b xXyYzZfoo -- $@ | diff-so-fancy ")
 a=$(echo $a |grep -o '[a-f0-9]\{7\}' )
 file=$(echo $a | xargs git diff-tree --no-commit-id --name-only -r | fzf -e --ansi --no-sort --reverse --preview "git show $a -- {} | diff-so-fancy")
 git show $a -- $file
