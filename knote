@@ -1,0 +1,11 @@
+#!/usr/bin/expect -f
+spawn k 
+expect "\n "
+
+set fp [open [lindex $argv 0] r]
+foreach line [split [read $fp] "\n"] { 
+    send "$line\r"
+    expect  "\n "
+} 
+
+close $fp
