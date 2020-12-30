@@ -1,9 +1,11 @@
- / Relational mathematics in shakti. Relations are represented as Boolean Matrix.
+/## Relational mathematics in k. Relations are represented as Boolean Matrix.
+/~~~
 com:{x:|/'y@&:'x; c:#:'x; w:&0=c; @[x;w;:;(#w)#,(|/c)#0b]}; 
 lres:{~com[+x;~y]}; Syq:{lres[x;y]&lres[~x;~y]}; Id:{x^(x*x) #1b,x#0b};  univ:{|/|/~com[+x;x]>Id@#x}; 
 univ:{&/2>+/'x}; inj:{univ@+x}; tot:{&/|/'x}; surj:{tot@+x}; mapping:{tot[x]&univ[x]}; bij:{inj[x]&surj[x]}; 
-Top:{x#,y#1b};  bot:{x#,y#0b}; Vec:{&/=/'x}; reflexive: {&/x ./: i,'i:!#x}; dom:{com[x; Top[#*x;#*x]]}; cod:{dom@+x}
+Top:{x#,y#1b};  bot:{x#,y#0b}; Vec:{&/=/'x}; reflexive: {&/x ./: i,'i:!#x}; dom:{com[x; Top[#*x;#*x]]}; cod:{dom@+x};
 same:{com[x;+x]};
+/~~~
 
 /
  left residul: columns of x contains in columns of y
