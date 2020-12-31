@@ -26,7 +26,7 @@ saveFen:{`:fen.txt 0: showFen x}                   ; / save board to a txt file,
 sh     :{}                                         ; / show functions are empty in normal code
 Show   :{}
 
-~~~Q
+~~~
 
 ~~~Q
 sh  : {show 8 cut x;}     / But show x as 8 rows when generating Markdown.
@@ -53,7 +53,7 @@ P P  PPP
 saveFen fen               /and you can cat fen.txt in a terminal to see the colors.
 `:fen.txt
 
-~~~Q
+~~~
 
 ## Chess Pieces attack positions.
 
@@ -61,7 +61,6 @@ saveFen fen               /and you can cat fen.txt in a terminal to see the colo
  Each live pieces have exactly 1 position, so it's a mapping(full function).
 
 ### Rook and Queen move and attacks in row and column.
-
 
 ~~~Q
 sh Pos2Row: raze 8#'enlist each(neg til 8)rotate\:10000000b; / The relation from position to row
@@ -119,7 +118,7 @@ sh first SameCol: same Pos2Col                             ; /   and same rank.
 10000000b
 10000000b
 
-~~~Q
+~~~
 
 ### Bishop and Queen move and attack in diagonals
   There are each 15 diagonals at goes down and up( read from left to right), we use -7 .. 7 to represent each. 
@@ -148,14 +147,14 @@ sh pos2Up   : -7+pos2Col+pos2Row    ; /   and a right up diagonal.
 0  1  2  3  4  5  6  7
 Pos2Up      : pos2Up  =\:diagonal   ;
 sh Pos2Down : pos2Down=\:diagonal   ;
-000000010000000b 000000001000000b 000000000100000b 000000000010000b 000000000001000b 000000000000100b 000000000000010b 000000000000001b
-000000100000000b 000000010000000b 000000001000000b 000000000100000b 000000000010000b 000000000001000b 000000000000100b 000000000000010b
-000001000000000b 000000100000000b 000000010000000b 000000001000000b 000000000100000b 000000000010000b 000000000001000b 000000000000100b
-000010000000000b 000001000000000b 000000100000000b 000000010000000b 000000001000000b 000000000100000b 000000000010000b 000000000001000b
-000100000000000b 000010000000000b 000001000000000b 000000100000000b 000000010000000b 000000001000000b 000000000100000b 000000000010000b
-001000000000000b 000100000000000b 000010000000000b 000001000000000b 000000100000000b 000000010000000b 000000001000000b 000000000100000b
-010000000000000b 001000000000000b 000100000000000b 000010000000000b 000001000000000b 000000100000000b 000000010000000b 000000001000000b
-100000000000000b 010000000000000b 001000000000000b 000100000000000b 000010000000000b 000001000000000b 000000100000000b 000000010000000b
+000000010000000b 000000001000000b 000000000100000b 000000000010000b 000000000..
+000000100000000b 000000010000000b 000000001000000b 000000000100000b 000000000..
+000001000000000b 000000100000000b 000000010000000b 000000001000000b 000000000..
+000010000000000b 000001000000000b 000000100000000b 000000010000000b 000000001..
+000100000000000b 000010000000000b 000001000000000b 000000100000000b 000000010..
+001000000000000b 000100000000000b 000010000000000b 000001000000000b 000000100..
+010000000000000b 001000000000000b 000100000000000b 000010000000000b 000001000..
+100000000000000b 010000000000000b 001000000000000b 000100000000000b 000010000..
 sh @[;35]SameUp  : same Pos2Up      ; / All the positions that's in the same up diagonal as d4.
 00000001b
 00000010b
@@ -177,13 +176,13 @@ sh @[;35]SameDown: same Pos2Down    ;
 
 diff :{x-/:\:x} /diff table of an array to itself
 
-~~~Q
+~~~
 
 ~~~Q
 Show Pos2Up[35]
 000000010000000b
 
-~~~Q
+~~~
 ### King move/attack in 1 step.
 
  King can move/attack 1 step in any direction, except those are occupied by it's own piece, or attacked by the opposite.
@@ -213,7 +212,7 @@ sh first 2>abs diff pos2Row / positions with row difference to position 0 < 2
 00000000b
 00000000b
 
-~~~Q
+~~~
 
 
 ~~~Q
@@ -227,7 +226,7 @@ sh first king: (and). 2>abs each diff each (pos2Row;pos2Col);
 00000000b
 00000000b
 
-~~~Q
+~~~
  At position 0(A8), king can only move to 3 positions above, plus position 0. 
 
 ~~~Q
@@ -270,7 +269,7 @@ sh k&: not SameRow raze[bd] ? "R"
 00000000b
 00000000b
 
-~~~Q
+~~~
 
 #### Pawn attack: white pawn(P) attack up left and up right, so row-1, column+-1
 
@@ -294,7 +293,7 @@ sh last 1=abs diff pos2Col
 00000010b
 00000010b
 
-~~~Q
+~~~
 
 ~~~Q
 sh first -2 # P:( 1=diff pos2Row)&(1=abs diff pos2Col)
@@ -316,7 +315,7 @@ sh first      p:(-1=diff pos2Row)&(1=abs diff pos2Col) /black pawn attack downwa
 00000000b
 00000000b
 
-~~~Q
+~~~
 
 ## Goal: use relational math to represent a chess board, and solve a simple puzzle (mobility analysis).
 
