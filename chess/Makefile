@@ -1,5 +1,6 @@
-chess.md: chess.q
+chess.md: chess.q ../qnote
 	../qnote chess.q | sed 's/q)//' | tail +4 > chess.md
+	cp chess.md ../
 fen.txt:
 	fswatch -o fen.txt | xargs -n1 -I{} cat fen.txt
 watch:

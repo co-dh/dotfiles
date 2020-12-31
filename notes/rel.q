@@ -4,9 +4,9 @@ Relations can be implemented as
                       | composition | negation | converse  | inclusion | union | meet | memory | row |  
     1. boolean matrix | E           | E        | E         | E         | E     | E    | On     | row |
     2. pair of array  | Hard        | ?        | E         | E         | E     | E    | On     | ?
-   *3. dictionary     | E           | ?        | H         | H         | H     | H    | Best   | ?
+    3. dictionary     | E           | ?        | H         | H         | H     | H    | Best   | ?
 
-Choose 3 because composition is the most common operation.
+Choose 1 because it's even faster than the other when composition. 
 
 Goal: replace table algebra with relational algebra.
 
