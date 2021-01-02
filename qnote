@@ -4,8 +4,20 @@ expect "q)"
 
 set fp [open [lindex $argv 0] r]
 foreach line [split [read $fp] "\n"] { 
-    send "$line\r"
-    expect "q)"
+    # beginning space removed because k interpretered it as comments.
+    switch -regexp $line { 
+        {^/[ ]*$}    - 
+        {^\\[ ]*$}   { puts ``` } 
+        {^// .*$} { 
+            send -- "[string range $line 3 end]\r"
+            expect "\nq)"
+         }
+        {^/.*}   { puts [string range $line 1 end] } 
+        default {
+            send -- "[string trim $line]\r"
+            expect "\nq)"
+        } 
+    }
 } 
 
 close $fp

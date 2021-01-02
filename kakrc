@@ -3,7 +3,7 @@ hook global WinSetOption filetype=python %{
     lint-enable
 }
 
-set global grepcmd 'rg --column'
+#set global grepcmd 'rg --column'
 map global normal <space> ,
 map global normal , <space>
 map global normal <c-l> '<c-s><a-x><a-;>Gi:tmux-send-text<ret>j'
@@ -30,16 +30,16 @@ evaluate-commands %sh{
     if [ -z "$TMUX" ]; then
         echo ""
     else
-        echo "colorscheme solarized-dark"
+        echo "colorscheme solarized-light"
     fi
 }
 
-#addhl global/ column 120 Error
+addhl global/ column 100 Error
 
 map -docstring 'command'               global user <space> :
 map -docstring 'cpp-alternative-file'  global user a :cpp-alternative-file<ret>
 map -docstring 'align by | '           global user | s\|<ret>&
-map -docstring 'load q block'          global user B <a-i>p<a-|>dd<space>of=/lxhome/denghao/tmp/dh.q<ret>:tmux-send-text<space>'\l<space>/lxhome/denghao/tmp/dh.q'<ret>ghh:tmux-send-text<ret>
+map -docstring 'load q block'          global user B <a-i>p<a-|>dd<space>of=/tmp/dh.q<ret>:tmux-send-text<space>'\l<space>/tmp/dh.q'<ret>ghh:tmux-send-text<ret>
 map -docstring 'switch buffer'         global user b :fzf-buffer<ret>
 map -docstring 'ctags-search'          global user c :ctags-search<ret>
 map -docstring 'escape'                global user e :tmux-send-slash<ret>:tmux-send-line<ret>
@@ -71,8 +71,8 @@ hook global InsertChar \t %{ exec -draft h@ }
 
 set global tabstop 4
 
-set-option global toolsclient tools
-set-option global docsclient docs
+#set-option global toolsclient tools
+#set-option global docsclient docs
 def sel-trailing-space -override %{exec '%s\h+$<ret>'}
 
 
@@ -189,3 +189,18 @@ def -override -docstring 'send \ return to tmux pane' \
 }}
 
 map global insert <c-s>  'select from where<esc>bi   <left><left>'
+
+
+define-command -hidden -override tmux-send-text -params 0..1 -docstring %{
+        tmux-send-text [text]: Send text(append new line) to the REPL pane.
+        If no text is passed, then the selection is used
+    } %{
+    nop %sh{
+        if [ $# -eq 0 ]; then
+            tmux set-buffer -b kak_selection -- "${kak_selection}"
+        else
+            tmux set-buffer -b kak_selection -- "$1"
+        fi
+        tmux paste-buffer -b kak_selection -t "$kak_opt_tmux_repl_id"
+    }
+}

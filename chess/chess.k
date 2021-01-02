@@ -19,6 +19,7 @@ showRow:{[board;row]: ,/(::;bg)[.q.mod[row+!8;2]]@'board[row]}      /show a row 
 showFen:{(,"\033[2J"),showRow[unicode @/: board x]'!8}              /[2J is clear screen. 
 saveFen:{`:fen.txt 0: showFen x}
 sh: {.q.show .q.cut[8;] x} /show as 8*8
+
 /~~~
 /
     fen:"5b2/p3n2r/3R2pp/k1p1Bp2/2B1p3/1P6/P1P2PPP/2K5"
