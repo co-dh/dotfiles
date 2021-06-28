@@ -16,14 +16,17 @@
 
 (setq ob-q-i 0)
 
+
 ;; This is the main function which is called to evaluate a code
+
 (defun org-babel-execute:q (body params)
   (if (not (get-process "q")) (ob-q-init))
   (setq ob-q-output "")
   (message "sending: [%s]" body)
-  (process-send-string "q" (concat body "\n" sep))
+  (write-region body nil "/tmp/obq.q")
+  (process-send-string "q" (concat "\\l /tmp/obq.q" "\n" sep))
   (accept-process-output (get-process "q") 5 0 1)
-  (message "get out:[%s]" ob-q-output)
+  (message "got out:[%s]" ob-q-output)
   (while (not (or (string-suffix-p sep ob-q-output)
                   (string-suffix-p "wsfull\n" ob-q-output)
                   (string-suffix-p "q\n" ob-q-output)
