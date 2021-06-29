@@ -1,3 +1,7 @@
+;(setq comp-verbose 3)
+;(setq comp-debug 3)
+
+;(native-compile (lambda (x) (+ x 1)))
 (menu-bar-mode -1)
 (show-paren-mode t)
 (global-hl-line-mode t)
@@ -34,7 +38,7 @@
   (ivy-mode 1)
   (setq ivy-use-virtual-buffers t)
   )
-
+        
 (use-package counsel :config
   (global-set-key (kbd "C-s") 'swiper-isearch)
   (global-set-key (kbd "M-x") 'counsel-M-x)
@@ -51,14 +55,16 @@
   (global-set-key (kbd "C-c V") 'ivy-pop-view) 
   )
 
-; (use-package magit)
+(use-package magit)
 
 (use-package which-key :config (which-key-mode t))
   
 (add-to-list 'load-path "~/.emacs.d/lisp/")
+(add-to-list 'load-path "~/dotfiles/")
+(require 'ob-q)
+
 (autoload 'q-mode "q-mode")
 (add-to-list 'auto-mode-alist '("\\.[kq]\\'" . q-mode))
-
 (diminish 'undo-tree-mode)
 (load-theme 'leuven)
 
@@ -73,8 +79,7 @@
     ("M-8" . winum-select-window-8)
     ("M-9" . winum-select-window-9)
     ))
-
-
+ 
 (global-set-key (kbd "<escape>") 'ryo-modal-mode)
 
 (custom-set-variables
@@ -82,10 +87,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(avy-keys '(97 114 115 116 103 109 110 101 105 111))
  '(custom-safe-themes
    '("4bca89c1004e24981c840d3a32755bf859a6910c65b829d9441814000cf6c3d0" "37144b437478e4c235824f0e94afa740ee2c7d16952e69ac3c5ed4352209eefb" "76bfa9318742342233d8b0b42e824130b3a50dcc732866ff8e47366aed69de11" default))
+ '(exec-path
+   '("/opt/local/bin" "/opt/local/sbin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/Applications/MacPorts/Emacs.app/Contents/MacOS/libexec" "/Applications/MacPorts/Emacs.app/Contents/MacOS/bin" "/usr/local/bin"))
+ '(org-confirm-babel-evaluate nil)
  '(package-selected-packages
-   '(visual-regexp phi-search undo-tree ivy-rich kakoune winum magit which-key use-package smex ivy-hydra doom-themes diminish counsel)))
+   '(goto-last-change avy htmlize company company-mode visual-regexp phi-search undo-tree ivy-rich kakoune winum magit which-key use-package smex ivy-hydra doom-themes diminish counsel)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -93,10 +102,14 @@
  ;; If there is more than one, they won't work right.
  )
 
-(ivy-rich-mode)
+(use-package company
+  :hook (after-init . global-company-mode))
 
+;(ivy-rich-mode)
+
+(setq-default cursor-type 'bar)
 (use-package kakoune ;; Having a non-chord way to escape is important, since key-chords don't work in macros
-  :bind ("C-z" . ryo-modal-mode)
+  :bind ("C-t" . ryo-modal-mode)
   :hook (after-init . my/kakoune-setup)
   :config
   (defun ryo-enter () "Enter normal mode" (interactive) (ryo-modal-mode 1))
@@ -106,8 +119,11 @@
       (setq ryo-modal-cursor-type 'box)
       (ryo-modal-keys
        (";"    kakoune-deactivate-mark)
+       ;("n" mc/skip-to-next-like-this)
+       ("N" mc/mark-next-like-this)
+       ("*" mc/mark-all-like-this)
        ("M-s"  mc/edit-ends-of-lines)
-       ("e" forword-word :first '(kakoune-set-mark-if-inactive))
+       ("e" forward-word :first '(kakoune-set-mark-if-inactive))
         )))
 
 (use-package undo-tree
@@ -124,15 +140,34 @@
               ("l" . undo-tree-visualize-switch-branch-right)))
 
 
+
 ;; This overrides the default mark-in-region with a prettier-looking one,
 ;; and provides a couple extra commands
-(use-package visual-regexp
-  :ryo
-  ("s" vr/mc-mark)
-  ("?" vr/replace)
-  ("M-/" vr/query-replace))
+;(use-package visual-regexp
+;  :ryo
+;  ("s" vr/mc-mark)
+;  ("?" vr/replace)
+;  ("M-/" vr/query-replace))
 
 ;; Emacs incremental search doesn't work with multiple cursors, but this fixes that
-(use-package phi-search
-  :bind (("C-s" . phi-search)
-         ("C-r" . phi-search-backward)))
+;(use-package phi-search
+;  :bind (("C-s" . phi-search)
+;         ("C-r" . phi-search-backward)))
+
+(require 'org-tempo)
+(use-package htmlize)
+(org-babel-do-load-languages 'org-babel-load-languages '((dot . t)))
+
+(use-package avy
+  :config (global-set-key (kbd "M-/") 'avy-goto-char-2))
+
+(recentf-mode 1)
+
+(use-package goto-last-change
+  :ryo
+  ("g ." goto-last-change))
+
+(use-package view
+  :ryo
+  ("C-u" View-scroll-half-page-backward)
+  ("C-d" View-scroll-half-page-forward))

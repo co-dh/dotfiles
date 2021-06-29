@@ -26,13 +26,13 @@ map global normal <c-w> <a-i>w
 
 def -override pwd 'echo %sh{pwd}'
 
-evaluate-commands %sh{
-    if [ -z "$TMUX" ]; then
-        echo ""
-    else
-        echo "colorscheme solarized-light"
-    fi
-}
+#evaluate-commands %sh{
+    #if [ -z "$TMUX" ]; then
+        #echo ""
+    #else
+        ##echo "colorscheme solarized-light"
+    #fi
+#}
 
 addhl global/ column 100 Error
 
@@ -46,6 +46,7 @@ map -docstring 'escape'                global user e :tmux-send-slash<ret>:tmux-
 map -docstring 'escape'                global user d :tmux-send-text<space>"echo<space>$"<ret>:tmux-send-text<ret>:tmux-send-line<ret>
 map -docstring 'Eval in Kak'           global user E :<space><c-r>.<ret>
 map -docstring 'search'                global user f :fzf-search<space>'<c-r>.'<ret>
+map -docstring 'Focus'                 global user F :set-option<space>global<space>tmux_repl_id<space>'%
 map -docstring 'kill buffer'           global user k :<space>db<ret>
 map -docstring 'kill'                  global user K :<space>kill<ret>
 map -docstring 'reload q'              global user L :<space>write<ret>:<space>tmux-send-text<space>'\l<space><c-r>%'<ret>gll:send-text<ret>
@@ -204,3 +205,5 @@ define-command -hidden -override tmux-send-text -params 0..1 -docstring %{
         tmux paste-buffer -b kak_selection -t "$kak_opt_tmux_repl_id"
     }
 }
+
+source ~/dotfiles/q.kak
