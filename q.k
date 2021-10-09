@@ -1,3 +1,5 @@
+/ [1,19] array of primartive. [20-76] enum. 77: any map. 78-96: (77+t) mapped list of lists of t. 97: nested sym enum. 98: table, 99: dic. 100 lambda
+/ ~t&(77h>t)|99h<t:@x  means: not (t<>0 and (77>t ) or 99<t(funcs), means all composite type
 \d .q
 /each: +-*%&|^<>=$ <= >= <> @ ? in within bin div abs log exp sqrt sin cos tan  f' f\: f/:
 neg:-:;not:~:;null:^:;string:$:;reciprocal:%:;floor:_:;ceiling:-_-:;signum:{(x>0)-x<0}
@@ -33,8 +35,12 @@ asc:{$[99h=@x;(!x)[i]!`s#r i:<r:. x;`s=-2!x;x;0h>@x;'`rank;`s#x@<x]};
 desc:{$[99h=@x;(!x)[i]!r i:>r:. x;0h>@x;'`rank;x@>x]}
 
 msum:{$[99h=@y;(!y)!.z.s[x;. y];y-(-x)_(0i*x#y),y:+\y]};
-mcount:{msum[x;~^y]};mavg:{msum[x;0.0^y]%mcount[x;y]};mdev:{sqrt mavg[x;y*y]-m*m:mavg[x;y:"f"$y]}
-xrank:{$[0h>@y;'`rank;_y*x%#y:<<y]};mmin:{(x-1)&':/y};mmax:{(x-1)|':/y};xprev:{$[0h>@y;'`rank;y(!#y)-x]};rotate:{$[0h>@y;'`rank;98h<@y;'`type;#y;,/|(0;mod[x;#y])_y;y]};ema:{(*y)(1f-x)\x*y}
+mcount:{msum[x;~^y]};
+mavg:{msum[x;0.0^y]%mcount[x;y]};
+mdev:{sqrt mavg[x;y*y]-m*m:mavg[x;y:"f"$y]}
+xrank:{$[0h>@y;'`rank;_y*x%#y:<<y]};
+mmin:{(x-1)&':/y};
+mmax:{(x-1)|':/y};xprev:{$[0h>@y;'`rank;y(!#y)-x]};rotate:{$[0h>@y;'`rank;98h<@y;'`type;#y;,/|(0;mod[x;#y])_y;y]};ema:{(*y)(1f-x)\x*y}
 
 /other: ~,#_ !.   getenv exit
 distinct:?:;group:=:;where:&:;flip:+:;type:@:;key:!:;til:{$[0>@x;!x;'`type]};value:get:.:;attr:-2!;cut:{$[0h>@x;x*!-_-(#y)%x;x]_y}
@@ -52,12 +58,28 @@ sublist:{$[99h=@y; sublist[x;!y]!sublist[x;. y]
 read0:0::;read1:1::;hclose:>:;hdel:~:;hsym:"s"$-1!';hcount:-7!;peach:{x':y};system:."\\",
 
 /string:  like ss
-ltrim:{$[~t&(77h>t)|99h<t:@x;.z.s'x;^*x;((^x)?0b)_x;x]};
-rtrim:{$[~t&(77h>t)|99h<t:@x;.z.s'x;^last x;(-(|^x)?0b)_x;x]};
+ltrim:{$[~t&(77h>t)|99h<t:@x;.z.s'x
+        ;^*x                ;((^x)?0b)_x
+                            ;x]};
+rtrim:{$[~t&(77h>t)|99h<t:@x;.z.s'x
+        ;^last x            ;(-(|^x)?0b)_x
+                            ;x]};
 trim:{ltrim rtrim x}
-lower:{$[$[(~@x)&10h~@*x;&/10h=@:'x;0b];_x;~t&(77h>t)|99h<t:abs@@x;.z.s'x;19h<t;.z.s@. x;~t in 10 11h;'`type;_x]}
-upper:{$[$[(~@x)&10h~@*x;&/10h=@:'x;0b];.Q.Aa x;~t&(77h>t)|99h<t:abs@@x;.z.s'x;19h<t;.z.s@. x;~t in 10 11h;'`type;$[11h=t;`$.Q.Aa@$x;.Q.Aa x]]}
-ssr:{,/@[x;1+2*!_.5*#x:(0,/(0,{n:x?"[";$[n=#x;n;n+.z.s$[(#x)=p:x?"]";'"unmatched ]";p]_x:(n+2+"^"=x n+1)_x]}y,"")+/:x ss y)_x;$[100h>@z;:[;z];z]]}
+lower:{$[$[(~@x)&10h~@*x;  &/10h=@:'x;  0b] ;_x /array of string
+         ;~t&(77h>t)|99h<t:abs@@x           ;.z.s'x
+         ;19h<t                             ;.z.s@. x
+         ;~t in 10 11h                      ;'`type
+                                            ;_x]}
+upper:{$[$[(~@x)&10h~@*x;&/10h=@:'x;0b];.Q.Aa x   /array of string
+        ;~t&(77h>t)|99h<t:abs@@x       ;.z.s'x    /composite
+        ;19h<t                         ;.z.s@. x  /sym
+        ;~t in 10 11h                  ;'`type
+                                       ;$[11h=t;  `$.Q.Aa@$x;  .Q.Aa x]]}
+
+ssr:{,/@[x
+        ;1+2*!_.5*#x:(0,/(0,{n:x?"[";$[n=#x;n;n+.z.s$[(#x)=p:x?"]";'"unmatched ]";p]_x:(n+2+"^"=x n+1)_x]}y,"")+/:x ss y)_x
+        ;$[100h>@z;:[;z];z]
+        ]}
 
 /select insert update delete exec  / fkeys[&keys] should be eponymous, e.g. order.customer.nation   
 /{keys|cols}`t `f's{xasc|xdesc}`t n!`t xcol(prename) xcols(prearrange)  FT(xcol xasc xdesc)
@@ -109,7 +131,8 @@ dsave:{.[*x;1_x,y,`;:;@[;*!+a;`p#].Q.en[*x]a:. y];y}/:
 
 show:{1 .Q.s x;};csv:"," / ";"  also \z 1 for "D"$"dd/mm/yyyy"
 
-parse:{$["\\"=*x;(system;1_x);-5!x]};eval:-6!;reval:-24!
+parse:{$["\\"=*x;(system;1_x);-5!x]};
+eval:-6!;reval:-24!
 \d .Q  /def[`a`b`c!(0;0#0;`)]`b`c!(("23";"24");,"qwe")
 k:4.0;K:2021.04.26;host:-12!;addr:-13!;gc:-20!;ts:{-34!(x;y)};gz:-35!;w:{`used`heap`peak`wmax`mmap`mphy`syms`symw!(."\\w"),."\\w 0"}  / used: dpft en par chk ind fs fu fc
 res:`abs`acos`asin`atan`avg`bin`binr`cor`cos`cov`delete`dev`div`do`enlist`exec`exit`exp`getenv`hopen`if`in`insert`last`like`log`max`min`prd`select`setenv`sin`sqrt`ss`sum`tan`update`var`wavg`while`within`wsum`xexp
