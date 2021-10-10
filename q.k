@@ -40,10 +40,14 @@ mavg:{msum[x;0.0^y]%mcount[x;y]};
 mdev:{sqrt mavg[x;y*y]-m*m:mavg[x;y:"f"$y]}
 xrank:{$[0h>@y;'`rank;_y*x%#y:<<y]};
 mmin:{(x-1)&':/y};
-mmax:{(x-1)|':/y};xprev:{$[0h>@y;'`rank;y(!#y)-x]};rotate:{$[0h>@y;'`rank;98h<@y;'`type;#y;,/|(0;mod[x;#y])_y;y]};ema:{(*y)(1f-x)\x*y}
+mmax:{(x-1)|':/y};
+xprev:{$[0h>@y;'`rank;y(!#y)-x]};
+rotate:{$[0h>@y;'`rank;98h<@y;'`type;#y;,/|(0;mod[x;#y])_y;y]};
+ema:{(*y)(1f-x)\x*y} //exponentail moving average. Undocument case of use number as v2 in v2\[x;y] = x v2\y = (x v2 y0) v2 y1 ...  (0.1)\ = {y+x*0.1}\ in 2(0.1)\ 1 0 0
 
 /other: ~,#_ !.   getenv exit
-distinct:?:;group:=:;where:&:;flip:+:;type:@:;key:!:;til:{$[0>@x;!x;'`type]};value:get:.:;attr:-2!;cut:{$[0h>@x;x*!-_-(#y)%x;x]_y}
+distinct:?:;group:=:;where:&:;flip:+:;type:@:;key:!:;til:{$[0>@x;!x;'`type]};value:get:.:;attr:-2!;
+cut:{$[0h>@x;x*!-_-(#y)%x;x]_y}
 set:{$[@x;.[x;();:;y];-19!((,y),x)]};
 upsert:.[;();,;] / :: ,: files?
 raze:,/;union:?,;
@@ -86,7 +90,10 @@ ssr:{,/@[x
 view:{$`. .`\:x};
 tables:{."\\a ",$$[^x;`;x]};
 views:{."\\b ",$$[^x;`;x]}
-cols:{$[.Q.qp x:.Q.v x;.Q.pf,!+x;98h=@x;!+x;11h=@!x;!x;!+0!x]} /cols:{!.Q.V x}
+cols:{$[.Q.qp x:.Q.v x  ;.Q.pf,!+x
+       ;98h=@x          ;!+x
+       ;11h=@!x         ;!x
+                        ;!+0!x]} /cols:{!.Q.V x}
 xcols:{(x,f@&~(f:cols y)in x)#y};
 keys:{$[98h=@x:.Q.v x;0#`;!+!x]};
 xkey:{(#x)!.[0!y;();xcols x]};
@@ -158,10 +165,19 @@ opt:{[o]x::$[#i:&o like"-[^0-9]*" /i: where o like ... not sure what the x:: for
         ;((`$1_*:)'o)!1_'o:i_o}; /cut at -, convert to dict
         
 def:{x,((!y)#x){$[0h>@x;*:;::](@*x)$y}'y}
-qt:{$[99h=@x;(98h=@!x)&98h=@. x;98h=@x]}; v:{$[-11h=@x;.$[":"=*t:$x;`$t,"/";x];x]};
-qp:{$[~98h=@x;0;@x:.+x;~":"=*$x;0]};      V:{$[qp x:v x;((,pf)!,. pf),+$[(~x in!d0[])&(x:.+x)in !*. .Q.vt;.Q.vp x;d0[]@x];0h>@*x:+0!x;x@'!x;x]}
-ft:{$[{$[99h=@t:v x;98h=@. t;0]}y;[n:#+!y;n!x 0!y];x y]};
-ord:{if[~&/b:{(!#x)=x?x}c:.q.cols z;'"dup ",$c b?0b];if[~&/b:(y,:())in c;'y b?0b];ft[@[;!+t:0!v z;::]]z;ft[@[;!+t;@[;x@+y!t y]]]z};nv:{$["."~*$x;x;`$"..",$x]}
+qt:{$[99h=@x;(98h=@!x)&98h=@. x;98h=@x]}; / is x a table?
+v:{$[-11h=@x;.$[":"=*t:$x;`$t,"/";x];x]}; / value
+/table to dict
+V:{$[qp x:v x;((,pf)!,. pf),+$[(~x in!d0[])&(x:.+x)in !*. .Q.vt;.Q.vp x;d0[]@x];0h>@*x:+0!x;x@'!x;x]}
+qp:{$[~98h=@x;0;@x:.+x;~":"=*$x;0]}; /is partitioned table?
+ft:{$[{$[99h=@t:v x;98h=@. t;0]}y;[n:#+!y;n!x 0!y];x y]}; /apply f to table t as if it's simple.
+/sort table z with column y with ord x (<: or >:)
+ord:{if[~&/b:{(!#x)=x?x}c:.q.cols z;'"dup ",$c b?0b]
+    ;if[~&/b:(y,:())in c;'y b?0b]
+    ;ft[@[;!+t:0!v z;::]]z
+    ;ft[@[;!+t;@[;x@+y!t y]]]z};
+    
+nv:{$["."~*$x;x;`$"..",$x]}
 
 tx:{$[(76h<t)|~t:@x;$[0<t:@*x;-t;0h];20h>t;t;11h=t:@x:. nv@!x;t;98h=t;7h;1=#x:+!x;tx@*x;7h]};tt:0|tx'. V@
 fk:{$[(20h>t)|76h<t:@x;`;98h>@. nv t:!x;`;t]};t:" bg xhijefcspmdznuvts";
@@ -179,7 +195,9 @@ btoa:-32!;sha1:-33!;prf0:+`name`file`line`col`text`pos!*-37!
 l:{if[$[1>@d:!f:-1!x;1;`.d~*d];:.[$[qt d;*|`\:f;99=@d;`.;'`type];();:;d:. f]];d@:&~d like"*$";p:(d=`par.txt)|d like"[0-9]*";
  ."\\cd ",$x;{.q.set[x]$[0h>@!a:-1!x;. a;a`]}'d@&~(d=`html)|(d like"*#")|p|s:d like"*.?";if[|/p;L d@&p];if[~`.=x;(."\\l ",$:)'d@&s&~p];}
 
-sw:{.q.sublist[_.5**|."\\C"]x};tab:{" "/:'(x*|/#:''y)$/:y};t0:{$[x>#y;((#*y)#'" -"),y;y]}
+sw:{.q.sublist[_.5**|."\\C"]x};
+tab:{" "/:'(x*|/#:''y)$/:y};
+t0:{$[x>#y;((#*y)#'" -"),y;y]}
 s1:{-3!x} /{$[0>t:@x;$x;99h<t;-3!x;1h=t;"01"x;4h=t;,/$sw x;10h=t;x;t&t<98h;" "/:$sw x;-3!x]}
 s2:{$[99h=t:@x;((|/#:'x)$x:t0[#d;x]),'"| ",/:t0[#x:s2@!x]d:s2@. x;98h=t;(1#x),(,(#*x)#"-"),1_x:tab[1](,$!x),$[#*r:s2'. x:sw@+x;+r;()]
  ~#x;();t>76h;s1'x;t;$x;|/(97h<t)|0h>t:?@:'x;s1'x;(1<#?#:'x)|$[1=#t;(*t)in 1 4 10h;0];s1'x;tab[1]@s2'sw'x]}
@@ -205,11 +223,19 @@ dd:{`/:x,`$$y};d0:{dd[*|pd;*|pv]};p1:{$[#pm;pm[x](y;z);z in vt[y;x];vp x;+(!+. x
 
 p:{$[~#D;p2[x;`:.]':y;(,/p2[x]'/':P[i](;)'y)@<,/y@:i:&0<#:'y:D{x@&x in y}\:y]}
 view:{pd::PD x:$[(::)~x;x;&PV in x];u~:?u::..[pf;();:;pv::PV x];x{.[y;();:;+(x . y,`.d)!y]}'pt::!x:d0[];pn::pt!(#pt)#()}
-L:{D::();if[x~,`par.txt;if[~#x:,/D::!:'P::`$":",'0:*x;'`empty]];if[^*PV::x@:<x:(t:"DMJJ"i:10 7 4?#$*x)$$x;'`part]
- PD::$[#D::t$'$D;,/{P@&x in'D}'?PV;(#PV)#`:.];pf::`date`month`year`int i;view[];if[(0>."\\p")|."\\_";cn'.:'pt];}
-/L:{P::,`:.;D::,x;pf::`date;pt::!P[0]@**D;T::P!P{z!{x!(y . ,[;`]z,)'x}[x;y]'z}[pt]'D}
 
-cn:{$[#n:pn x:.+x;n;pn[x]:(#p1 .)':+(x;pd;pv)]};pcnt:{+/cn x};dt:{cn[y]@&pv in x}
+L:{
+    D::()
+    ;if[x~,`par.txt; if[~#x:,/D::!:'P::`$":",'0:*x   ;'`empty]]
+    ;if[^*PV::x@:<x:(t:"DMJJ"i:10 7 4?#$*x)$$x;'`part]
+    ;PD::$[#D::t$'$D;,/{P@&x in'D}'?PV;(#PV)#`:.]
+    ;pf::`date`month`year`int i
+    ;view[]
+    ;if[(0>."\\p")|."\\_";cn'.:'pt];}
+/L:{P::,`:.;D::,x;pf::`date;pt::!P[0]@**D;T::P!P{z!{x!(y . ,[;`]z,)'x}[x;y]'z}[pt]'D}
+/ count of partitioned table
+cn:{$[#n:pn x:.+x; n;  pn[x]:(#p1 .)':+(x;pd;pv)]};
+pcnt:{+/cn x};dt:{cn[y]@&pv in x}
 ind:{,/i[j]{fp[pf;p]p1[x;pd y;p:pv y]z}[.+x]'(j:&~=':i)_y-n i:(n:+\0,cn x)bin y}
 fp:{+((,*x)!,(#z)#$[-7h=@y;y;(*|x)$y]),+z}
 foo:{[t;c;b;a;v;d]if[v;g:*|`\:b f:*!b;b:1_b];,/$[v|~#a;d fp[$[v;f,g;pf]]';::]p[(.+t;c;b;a)]d}
