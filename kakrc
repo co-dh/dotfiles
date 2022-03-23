@@ -1,7 +1,7 @@
-hook global WinSetOption filetype=python %{
-    set global lintcmd kak_pylint
-    lint-enable
-}
+#hook global WinSetOption filetype=python %{
+#    set global lintcmd kak_pylint
+#    lint-enable
+#}
 
 #set global grepcmd 'rg --column'
 map global normal <space> ,
@@ -34,16 +34,17 @@ def -override pwd 'echo %sh{pwd}'
     #fi
 #}
 
-addhl global/ column 100 Error
+addhl global/ column 120 Error
 
 map -docstring 'command'               global user <space> :
 map -docstring 'cpp-alternative-file'  global user a :cpp-alternative-file<ret>
-map -docstring 'align by | '           global user | s\|<ret>&
+map -docstring 'align by | '           global user | s\|<ret>&/xYzM<ret>
 map -docstring 'load q block'          global user B <a-i>p<a-|>dd<space>of=/tmp/dh.q<ret>:tmux-send-text<space>'\l<space>/tmp/dh.q'<ret>ghh:tmux-send-text<ret>
 map -docstring 'switch buffer'         global user b :fzf-buffer<ret>
 map -docstring 'ctags-search'          global user c :ctags-search<ret>
 map -docstring 'escape'                global user e :tmux-send-slash<ret>:tmux-send-line<ret>
-map -docstring 'escape'                global user d :tmux-send-text<space>"echo<space>$"<ret>:tmux-send-text<ret>:tmux-send-line<ret>
+#map -docstring 'del traling'           global user d :tmux-send-text<space>"echo<space>$"<ret>:tmux-send-text<ret>:tmux-send-line<ret>
+map -docstring 'del traling'           global user d :sel-trailing-space<ret>d
 map -docstring 'Eval in Kak'           global user E :<space><c-r>.<ret>
 map -docstring 'search'                global user f :fzf-search<space>'<c-r>.'<ret>
 map -docstring 'Focus'                 global user F :set-option<space>global<space>tmux_repl_id<space>'%
@@ -127,7 +128,7 @@ define-command -override send-line %{ execute-keys <c-s><a-x>:tmux-send-text<ret
 map global normal <c-l> ':send-line<ret>j'
 
 
-def -override rcd -docstring "cd to current buffer" %{cd %sh{dirname ${kak_reg_percent} | tr --delete "'"}; pwd}
+def -override rcd -docstring "cd to current buffer" %{cd %sh{dirname ${kak_main_reg_percent} }; pwd}
 declare-user-mode toggle
 map -docstring 'toggle'      global user t :enter-user-mode<space>toggle<ret>
 map -docstring 'line off'    global toggle T :<space>rmhl<space>window/line<ret>
@@ -135,7 +136,9 @@ map -docstring 'line on' global toggle t ':addhl window/line number-lines -relat
 map -docstring 'pwd'         global toggle p :pwd<ret>
 map -docstring 'rcd'         global toggle c :rcd<ret>
 map -docstring 'lint'        global toggle l :lint<ret>
-map -docstring 'next error'  global toggle n :lint-next-error<ret>
+map -docstring 'next error'  global toggle n :lint-next-message<ret>
+map -docstring 'Q file'     global toggle q :set-option<space>buffer<space>filetype<space>q<ret>
+map -docstring 'Mdfile '    global toggle m :set-option<space>buffer<space>filetype<space>markdown<ret>
 
 def -override -docstring 'invoke fzf to select a buffer' \
   fzf-buffer %{eval %sh{
@@ -207,3 +210,9 @@ define-command -hidden -override tmux-send-text -params 0..1 -docstring %{
 }
 
 source ~/dotfiles/q.kak
+
+hook global WinSetOption filetype=python %{
+        set-option window lintcmd "mypy --show-column-numbers"
+}
+
+set-option global lintcmd "mypy --show-column-numbers"

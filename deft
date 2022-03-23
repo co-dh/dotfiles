@@ -1,0 +1,2 @@
+#/bin/sh
+rg -m1 '' -g '*.md' | fzf -e --delimiter : --preview='less {1}'
