@@ -1,2 +1,2 @@
 #/bin/sh
-rg -m1 '' -g '*.md' | fzf -e --delimiter : --preview='less {1}'
+rg -m1 '' -g '*.md' | fzf -e --delimiter : --preview='glow --style light {1}'
