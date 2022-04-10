@@ -8,6 +8,8 @@ map global normal <space> ,
 map global normal , <space>
 map global normal <c-l> '<c-s><a-x><a-;>Gi:tmux-send-text<ret>j'
 map global insert <c-l> '<esc><a-x><a-;>Gi:tmux-send-text<ret>jghi'
+
+map global insert <c-d> '<a-;>:digraph<ret>'
 map global insert <c-a> <home>
 map global insert <c-e> <end>
 #map global normal * <a-i>w*
@@ -41,7 +43,8 @@ map -docstring 'cpp-alternative-file'  global user a :cpp-alternative-file<ret>
 map -docstring 'align by | '           global user | s\|<ret>&/xYzM<ret>
 map -docstring 'load q block'          global user B <a-i>p<a-|>dd<space>of=/tmp/dh.q<ret>:tmux-send-text<space>'\l<space>/tmp/dh.q'<ret>ghh:tmux-send-text<ret>
 map -docstring 'switch buffer'         global user b :fzf-buffer<ret>
-map -docstring 'ctags-search'          global user c :ctags-search<ret>
+#map -docstring 'ctags-search'          global user c :ctags-search<ret>
+map -docstring 'digraph'               global user c :digraph<ret>
 map -docstring 'escape'                global user e :tmux-send-slash<ret>:tmux-send-line<ret>
 #map -docstring 'del traling'           global user d :tmux-send-text<space>"echo<space>$"<ret>:tmux-send-text<ret>:tmux-send-line<ret>
 map -docstring 'del traling'           global user d :sel-trailing-space<ret>d
@@ -99,7 +102,7 @@ def  -override -params 0..1 -docstring 'invoke fzf to open a file. If any argume
       else
           FROM=.
       fi
-      FILE=$(find $FROM -type f| fzf-tmux --reverse --exact --preview='less {} ')
+      FILE=$(fd $FROM --type f| fzf-tmux --reverse --exact --preview-window 80% --preview='less {} ')
       #FILE=$(fd -t file $FROM | fzf-tmux --reverse --exact --preview='highlight -O ansi --force {} | head -n 100')
       if [ -n "$FILE" ]; then
         printf 'edit %%{%s}' "${FILE}"
@@ -195,24 +198,32 @@ def -override -docstring 'send \ return to tmux pane' \
 map global insert <c-s>  'select from where<esc>bi   <left><left>'
 
 
-define-command -hidden -override tmux-send-text -params 0..1 -docstring %{
-        tmux-send-text [text]: Send text(append new line) to the REPL pane.
-        If no text is passed, then the selection is used
-    } %{
-    nop %sh{
-        if [ $# -eq 0 ]; then
-            tmux set-buffer -b kak_selection -- "${kak_selection}"
-        else
-            tmux set-buffer -b kak_selection -- "$1"
-        fi
-        tmux paste-buffer -b kak_selection -t "$kak_opt_tmux_repl_id"
-    }
-}
+#define-command -hidden -override tmux-send-text -params 0..1 -docstring %{
+#        tmux-send-text [text]: Send text(append new line) to the REPL pane.
+#        If no text is passed, then the selection is used
+#    } %{
+#    nop %sh{
+#        if [ $# -eq 0 ]; then
+#            tmux set-buffer -b kak_selection -- "${kak_selection}"
+#        else
+#            tmux set-buffer -b kak_selection -- "$1"
+#        fi
+#        tmux paste-buffer -b kak_selection -t "$kak_opt_tmux_repl_id"
+#    }
+#}
 
 source ~/dotfiles/q.kak
 
-hook global WinSetOption filetype=python %{
-        set-option window lintcmd "mypy --show-column-numbers"
-}
+#hook global WinSetOption filetype=python %{
+#        set-option window lintcmd "mypy --show-column-numbers"
+#}
 
-set-option global lintcmd "mypy --show-column-numbers"
+#set-option global lintcmd "mypy --show-column-numbers"
+
+def -override -docstring 'digraph for unicode' \
+  digraph %{execute-keys %sh{
+      UNICODE=$( cat ~/dotfiles/digraphs.txt | fzf-tmux -e --reverse | cut -f 2) #this depends on fish.
+      if [ -n "$UNICODE" ]; then
+        echo "$(echo ${UNICODE})"
+      fi
+}}
