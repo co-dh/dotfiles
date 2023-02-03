@@ -41,7 +41,7 @@ addhl global/ column 120 Error
 map -docstring 'command'               global user <space> :
 map -docstring 'cpp-alternative-file'  global user a :cpp-alternative-file<ret>
 map -docstring 'align by | '           global user | s\|<ret>&/xYzM<ret>
-map -docstring 'load q block'          global user B <a-i>p<a-|>dd<space>of=/tmp/dh.q<ret>:tmux-send-text<space>'\l<space>/tmp/dh.q'<ret>ghh:tmux-send-text<ret>
+map -docstring 'load q block'          global user B <a-a>{<a-semicolon}Gh<a-|>dd<space>of=/tmp/dh.q<ret>:tmux-send-text<space>'\l<space>/tmp/dh.q'<ret>ghh:tmux-send-text<ret>
 map -docstring 'switch buffer'         global user b :fzf-buffer<ret>
 #map -docstring 'ctags-search'          global user c :ctags-search<ret>
 map -docstring 'digraph'               global user c :digraph<ret>
