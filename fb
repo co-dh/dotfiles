@@ -1,0 +1,6 @@
+#!/bin/bash
+d=${1:-$PWD}
+while cd $d ; do
+    d=$(printf '%s\n' $(ls --color) ~ ..|fzf -e --ansi --bind "left:change-query(..),~:change-query($HOME),one:accept")
+    [ -f $d ] && echo $d && break 
+done
