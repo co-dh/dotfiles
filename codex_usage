@@ -15,4 +15,5 @@ jq -r '
   | @tsv
 ' "$f" | tail -n1 || true)
 [ -n "$line" ] || exit 1
-printf '%s\n' "$line"
+IFS=$'\t' read -r p s tot last <<<"$line"
+printf '5h:%s%% 7d:%s%% T:%s Δ:%s\n' "$p" "$s" "$tot" "$last"
