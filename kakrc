@@ -4,8 +4,6 @@
 #}
 
 #set global grepcmd 'rg --column'
-map global normal <space> ,
-map global normal , <space>
 map global normal <c-l> '<c-s><a-x><a-;>Gi:tmux-send-text<ret>j'
 map global insert <c-l> '<esc><a-x><a-;>Gi:tmux-send-text<ret>jghi'
 
@@ -17,6 +15,7 @@ map global normal f <c-s>f
 map global normal v <a-i>
 
 map global normal <c-w> <a-i>w
+set global fzf_preview_tmux_height 50
 
 # When I don't have ErgoDox
 #map global normal h m
@@ -36,12 +35,12 @@ def -override pwd 'echo %sh{pwd}'
     #fi
 #}
 
-addhl global/ column 120 Error
+#addhl global/ column 120 Error
 
 map -docstring 'command'               global user <space> :
 map -docstring 'cpp-alternative-file'  global user a :cpp-alternative-file<ret>
 map -docstring 'align by | '           global user | s\|<ret>&/xYzM<ret>
-map -docstring 'load q block'          global user B <a-a>{<a-semicolon}Gh<a-|>dd<space>of=/tmp/dh.q<ret>:tmux-send-text<space>'\l<space>/tmp/dh.q'<ret>ghh:tmux-send-text<ret>
+#map -docstring 'load q block'          global user B <a-a>{<a-semicolon}Gh<a-|>dd<space>of=/tmp/dh.q<ret>:tmux-send-text<space>'\l<space>/tmp/dh.q'<ret>ghh:tmux-send-text<ret>
 map -docstring 'switch buffer'         global user b :fzf-buffer<ret>
 #map -docstring 'ctags-search'          global user c :ctags-search<ret>
 map -docstring 'digraph'               global user c :digraph<ret>
@@ -88,7 +87,7 @@ hook global ModeChange  pop:insert:normal %{ face window PrimaryCursor rgb:002b3
 #hook global FocusIn .*  %{ addhl window/line number-lines -relative -hlcursor}
 #hook global FocusOut .* %{ rmhl window/line}
 
-remove-highlighter global/match
+#remove-highlighter global/match
 add-highlighter global/match  show-matching
 
 hook global BufCreate .*/?mk %{
@@ -102,8 +101,7 @@ def  -override -params 0..1 -docstring 'invoke fzf to open a file. If any argume
       else
           FROM=.
       fi
-      FILE=$(fd $FROM --type f| fzf-tmux --reverse --exact --preview-window 80% --preview='less {} ')
-      #FILE=$(fd -t file $FROM | fzf-tmux --reverse --exact --preview='highlight -O ansi --force {} | head -n 100')
+      FILE=$(find $FROM -type f| fzf-tmux --reverse --exact --preview-window 80% --preview='less {} ')
       if [ -n "$FILE" ]; then
         printf 'edit %%{%s}' "${FILE}"
       fi
@@ -135,13 +133,16 @@ def -override rcd -docstring "cd to current buffer" %{cd %sh{dirname ${kak_main_
 declare-user-mode toggle
 map -docstring 'toggle'      global user t :enter-user-mode<space>toggle<ret>
 map -docstring 'line off'    global toggle T :<space>rmhl<space>window/line<ret>
-map -docstring 'line on' global toggle t ':addhl window/line number-lines -relative -hlcursor<ret>'
+#map -docstring 'line on' global toggle t ':addhl window/line number-lines -relative -hlcursor<ret>'
+map -docstring 'line on' global toggle t ':addhl window/line number-lines -hlcursor<ret>'
 map -docstring 'pwd'         global toggle p :pwd<ret>
 map -docstring 'rcd'         global toggle c :rcd<ret>
 map -docstring 'lint'        global toggle l :lint<ret>
 map -docstring 'next error'  global toggle n :lint-next-message<ret>
 map -docstring 'Q file'     global toggle q :set-option<space>buffer<space>filetype<space>q<ret>
 map -docstring 'Mdfile '    global toggle m :set-option<space>buffer<space>filetype<space>markdown<ret>
+map -docstring 'wrap long line on'    global toggle r :addhl<space>window/<space>wrap<ret>
+map -docstring 'wrap long line off'   global toggle R  :rmhl<space>window/wrap<ret>
 
 def -override -docstring 'invoke fzf to select a buffer' \
   fzf-buffer %{eval %sh{
@@ -169,8 +170,10 @@ hook global WinSetOption filetype=rust %{
 
 def -override -docstring 'grep in current folder' -params 1.. \
   fzf-grep %{eval %sh{
+      set -ex
       #FILE=$(rg --color always -n "$@" | fzf-tmux --exit-0 --exact --no-sort --ansi --delimiter=: --layout=reverse --preview="highlight -O ansi --force {1} | tail -n +{2}")
-      FILE=$(rg --color always -n "$@" | fzf-tmux --exit-0 --exact --no-sort --ansi --delimiter=: --layout=reverse --preview="cat {1} | tail -n +{2} ")
+      #FILE=$(rg --color always -n "$@" | fzf-tmux --exit-0 --exact --no-sort --ansi --delimiter=: --layout=reverse --preview="cat {1} | tail -n +{2} ")
+      FILE=$(rg -n "$@" | fzf-tmux --exit-0 --exact --no-sort --ansi --delimiter=: --layout=reverse )
       if [ -n "$FILE" ]; then
         echo "$(echo "edit -existing ${FILE}"| cut -d: -f 1,2 | tr : " ")"
       fi
@@ -212,7 +215,7 @@ map global insert <c-s>  'select from where<esc>bi   <left><left>'
 #    }
 #}
 
-source ~/dotfiles/q.kak
+#source ~/dotfiles/q.kak
 
 #hook global WinSetOption filetype=python %{
 #        set-option window lintcmd "mypy --show-column-numbers"
@@ -227,3 +230,5 @@ def -override -docstring 'digraph for unicode' \
         echo "$(echo ${UNICODE})"
       fi
 }}
+eval %sh{kak-lsp}
+lsp-enable
