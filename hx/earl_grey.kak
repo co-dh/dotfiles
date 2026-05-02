@@ -1,7 +1,5 @@
-# Generated from /home/dh/repo/helix/runtime/themes/earl_grey.toml
-# Converted by hx2kak.py
+# earl_grey — converted from Helix theme by helix-theme2kak
 
-# Palette
 declare-option str black "rgb:000000"
 declare-option str chaotica "rgb:101010"
 declare-option str deepspace "rgb:1b1b1b"
@@ -19,49 +17,44 @@ declare-option str sky "rgb:99bbe0"
 declare-option str myrtle "rgb:e29eca"
 declare-option str maple "rgb:e5c890"
 
-# UI
-set-face global Default ,rgb:101010
-set-face global ui_background_separator rgb:f0f0f0
-set-face global PrimaryCursor rgb:000000,rgb:b59efc
-set-face global LineHighlight ,rgb:1b1b1b
-set-face global InfoBlock rgb:f0f0f0,rgb:1b1b1b
-set-face global ui_highlight ,rgb:2a2a2d
-set-face global LineNumbers rgb:808080
-set-face global LineNumberCursor rgb:b59efc
-set-face global MenuForeground rgb:f0f0f0,rgb:1b1b1b
-set-face global ui_menu_scroll rgb:808080,rgb:1b1b1b
-set-face global MenuBackground rgb:f0f0f0,rgb:3e3e3e
-set-face global Information ,rgb:1b1b1b
-set-face global PrimarySelection ,rgb:3e3e3e
-set-face global StatusLine rgb:b59efc,rgb:1b1b1b
-set-face global StatusLineInfo rgb:f0f0f0,rgb:1b1b1b+d
-set-face global StatusLineModeInsert rgb:101010,rgb:b59efc+b
-set-face global StatusLineModeNormal rgb:101010,rgb:99bbe0+b
-set-face global StatusLineModeSelect rgb:101010,rgb:e29eca+b
-set-face global DefaultText rgb:a6a6a6
-set-face global DefaultFocus rgb:f0f0f0
-set-face global ui_virtual rgb:2a2a2d
-set-face global ui_virtual_indent_guide rgb:2a2a2d
-set-face global ui_virtual_inlay_hint rgb:3e3e3e
-set-face global ui_virtual_jump_label rgb:e29eca
-set-face global ColumnRuler ,rgb:2a2a2d
-set-face global BufferPadding rgb:2a2a2d
+set-face global Default "%opt{silver},%opt{chaotica}"
 
-# Diagnostics
-set-face global DiagnosticError rgb:e78284+u
-set-face global DiagnosticHint rgb:99bbe0+u
-set-face global DiagnosticInfo rgb:808080+u
-set-face global DiagnosticWarning rgb:e5c890+u
-set-face global ts_error rgb:e78284
-set-face global ts_hint rgb:99bbe0
-set-face global ts_info rgb:808080
-set-face global ts_warning rgb:e5c890
-
-# Tree-sitter
-set-face global ts_comment +d
-set-face global ts_diff_delta rgb:a6a6a6
-set-face global ts_diff_minus rgb:e78284
-set-face global ts_diff_plus rgb:90b99f
-set-face global ts_function +b
-set-face global ts_keyword rgb:b59efc
-set-face global ts_type rgb:e5c890
+set-face global ts_comment "+d"
+set-face global ts_comment_block "+d"
+set-face global ts_comment_line "+d"
+set-face global ts_diff_delta "%opt{silver}"
+set-face global ts_diff_delta_moved "%opt{silver}"
+set-face global ts_diff_minus "%opt{blush}"
+set-face global ts_diff_plus "%opt{jade}"
+set-face global ts_error "%opt{blush}"
+set-face global ts_function "+b"
+set-face global ts_function_builtin "+b"
+set-face global ts_function_macro "+b"
+set-face global ts_function_method "+b"
+set-face global ts_function_method_private "+b"
+set-face global ts_function_special "+b"
+set-face global ts_hint "%opt{sky}"
+set-face global ts_info "%opt{grey}"
+set-face global ts_keyword "%opt{earl}"
+set-face global ts_keyword_conditional "%opt{earl}"
+set-face global ts_keyword_control "%opt{earl}"
+set-face global ts_keyword_control_conditional "%opt{earl}"
+set-face global ts_keyword_control_directive "%opt{earl}"
+set-face global ts_keyword_control_except "%opt{earl}"
+set-face global ts_keyword_control_exception "%opt{earl}"
+set-face global ts_keyword_control_import "%opt{earl}"
+set-face global ts_keyword_control_repeat "%opt{earl}"
+set-face global ts_keyword_control_return "%opt{earl}"
+set-face global ts_keyword_directive "%opt{earl}"
+set-face global ts_keyword_function "%opt{earl}"
+set-face global ts_keyword_operator "%opt{earl}"
+set-face global ts_keyword_special "%opt{earl}"
+set-face global ts_keyword_storage "%opt{earl}"
+set-face global ts_keyword_storage_modifier "%opt{earl}"
+set-face global ts_keyword_storage_modifier_mut "%opt{earl}"
+set-face global ts_keyword_storage_modifier_ref "%opt{earl}"
+set-face global ts_keyword_storage_type "%opt{earl}"
+set-face global ts_type "%opt{maple}"
+set-face global ts_type_builtin "%opt{maple}"
+set-face global ts_type_enum_variant "%opt{maple}"
+set-face global ts_warning "%opt{maple}"

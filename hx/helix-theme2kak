@@ -1,0 +1,242 @@
+#!/usr/bin/env python3
+"""Convert Helix TOML theme to kak-tree-sitter kak colorscheme.
+
+Usage: helix-theme2kak < input.toml > output.kak
+   or: helix-theme2kak path/to/theme.toml [output.kak]
+"""
+import sys, tomllib, re
+from pathlib import Path
+
+FALLBACK = {
+    "comment.block.documentation": "ts_comment",
+    "comment.block":              "ts_comment",
+    "comment.line":               "ts_comment",
+    "markup.raw.inline":          "ts_markup_raw",
+    "markup.raw.block":           "ts_markup_raw",
+    "markup.list":                "ts_markup_list_unnumbered",
+    "string.regex":               "ts_string_regex",
+    "string.regexp":              "ts_string_regexp",
+    "string.special.symbol":      "ts_string_special_symbol",
+    "json.escape":                "ts_string_escape",
+}
+IGNORE = ("ui.", "diagnostic.", "palette")
+MOD_MAP = {"bold": "b", "italic": "i", "underlined": "u",
+           "dim": "d", "crossed_out": "s", "reversed": "r"}
+
+# All known ts faces (from kak-tree-sitter highlighting docs) for cascade expansion.
+# Missing a sub-face (e.g. ts_keyword_control_conditional) will inherit from
+# the closest explicit parent, matching Helix's scope resolution.
+ALL_FACES = {
+    "ts_attribute", "ts_comment", "ts_comment_block", "ts_comment_line", "ts_conceal",
+    "ts_constant", "ts_constant_builtin_boolean", "ts_constant_character",
+    "ts_constant_character_escape", "ts_constant_macro", "ts_constant_numeric",
+    "ts_constant_numeric_float", "ts_constant_numeric_integer", "ts_constructor",
+    "ts_diff_plus", "ts_diff_minus", "ts_diff_delta", "ts_diff_delta_moved",
+    "ts_error", "ts_function", "ts_function_builtin", "ts_function_macro",
+    "ts_function_method", "ts_function_method_private", "ts_function_special",
+    "ts_hint", "ts_info",
+    "ts_keyword", "ts_keyword_control", "ts_keyword_conditional",
+    "ts_keyword_control_conditional", "ts_keyword_control_directive",
+    "ts_keyword_control_import", "ts_keyword_control_repeat",
+    "ts_keyword_control_return", "ts_keyword_control_except",
+    "ts_keyword_control_exception", "ts_keyword_directive", "ts_keyword_function",
+    "ts_keyword_operator", "ts_keyword_special",
+    "ts_keyword_storage", "ts_keyword_storage_modifier",
+    "ts_keyword_storage_modifier_mut", "ts_keyword_storage_modifier_ref",
+    "ts_keyword_storage_type", "ts_label",
+    "ts_markup_bold", "ts_markup_heading", "ts_markup_heading_1",
+    "ts_markup_heading_2", "ts_markup_heading_3", "ts_markup_heading_4",
+    "ts_markup_heading_5", "ts_markup_heading_6", "ts_markup_heading_marker",
+    "ts_markup_italic", "ts_markup_list_checked", "ts_markup_list_numbered",
+    "ts_markup_list_unchecked", "ts_markup_list_unnumbered",
+    "ts_markup_link_label", "ts_markup_link_url", "ts_markup_link_uri",
+    "ts_markup_link_text", "ts_markup_quote", "ts_markup_raw",
+    "ts_markup_raw_block", "ts_markup_raw_inline", "ts_markup_strikethrough",
+    "ts_namespace", "ts_operator", "ts_property", "ts_punctuation",
+    "ts_punctuation_bracket", "ts_punctuation_delimiter", "ts_punctuation_special",
+    "ts_special", "ts_spell", "ts_string", "ts_string_regex", "ts_string_regexp",
+    "ts_string_escape", "ts_string_special", "ts_string_special_path",
+    "ts_string_special_symbol", "ts_string_symbol", "ts_tag", "ts_tag_error",
+    "ts_text", "ts_text_title", "ts_type", "ts_type_builtin", "ts_type_enum_variant",
+    "ts_variable", "ts_variable_builtin", "ts_variable_other_member",
+    "ts_variable_other_member_private", "ts_variable_parameter", "ts_warning",
+}
+
+def face(scope: str) -> str | None:
+    for p in IGNORE:
+        if scope == p.rstrip(".") or scope.startswith(p):
+            return None
+    result = FALLBACK.get(scope, "ts_" + scope.replace(".", "_").replace("-", "_"))
+    # replace consecutive underscores
+    return result
+
+def color_ref(palette: dict, v: str) -> str:
+    """v is a palette name like 'blue_text' or a hex like '#abc'.
+    Return Kakoune color spec: %opt{name} or rgb:RRGGBB, or '' if not found."""
+    if not v:
+        return ""
+    v = re.sub(r"[^a-zA-Z0-9_]", "_", v)
+    if v in palette:
+        pv = palette[v]
+        if isinstance(pv, str) and pv.startswith("#"):
+            palette[v] = f"rgb:{pv[1:]}"  # mutate in-place for declare-option
+        return f"%opt{{{v}}}"
+    if v.startswith("#"):
+        hexval = v[1:].lower()
+        pfx = "rgba:" if len(hexval) == 8 else "rgb:"
+        return f"{pfx}{hexval}"
+    return ""
+
+def spec(palette: dict, val) -> tuple[str, str, str]:
+    """(fg, bg_with_comma, mods_chars)."""
+    if isinstance(val, str):
+        return color_ref(palette, val), "", ""
+    if not isinstance(val, dict):
+        return "", "", ""
+    fg, bg = val.get("fg", ""), val.get("bg", "")
+    fgs = color_ref(palette, fg) if fg else ""
+    bg_col = color_ref(palette, bg) if bg else ""
+    bgs = f",{bg_col}" if bg_col else ""
+    mods_chars = "".join(MOD_MAP[m] for m in val.get("modifiers", ()) if m in MOD_MAP)
+    ul = val.get("underline")
+    if isinstance(ul, dict) and ul.get("color"):
+        fgs = color_ref(palette, ul["color"])
+        mods_chars = mods_chars + "u"
+    # Kakoune requires modifiers AFTER bg: fg,bg+attr, not fg+attr,bg
+    return fgs, bgs, mods_chars
+
+def main():
+    if len(sys.argv) > 1:
+        path = Path(sys.argv[1])
+        name = path.stem
+    else:
+        text = sys.stdin.read()
+        name = "converted"
+
+    themes_dir = Path("/usr/lib/helix/runtime/themes")
+
+    def load_theme(p: Path) -> dict:
+        with open(p) as f:
+            return tomllib.loads(f.read())
+
+    def resolve_theme(toml_path: Path, seen: set | None = None) -> dict:
+        if seen is None:
+            seen = set()
+        real = toml_path.resolve()
+        if real in seen:
+            return {}
+        seen.add(real)
+        data = load_theme(toml_path)
+        parent = data.get("inherits", "")
+        if parent:
+            parent_path = themes_dir / f"{parent}.toml"
+            if parent_path.exists():
+                base = resolve_theme(parent_path, seen)
+                # merge palette: child overrides parent
+                base_palette = base.get("palette", {})
+                child_palette = data.get("palette", {})
+                merged_palette = {**base_palette, **child_palette}
+                if merged_palette:
+                    data["palette"] = merged_palette
+                # merge other keys: parent fills missing, child overrides
+                for k, v in base.items():
+                    if k not in data and k != "palette":
+                        data[k] = v
+        return data
+
+    if len(sys.argv) > 1:
+        data = resolve_theme(path)
+    else:
+        data = tomllib.loads(text)
+    palette = dict(data.get("palette", {}))
+    # Kakoune option names: [a-zA-Z0-9_] only. Replace all invalid chars with _.
+    palette = {re.sub(r"[^a-zA-Z0-9_]", "_", k): v for k, v in palette.items()}
+
+    lines = [f"# {name} — converted from Helix theme by helix-theme2kak", ""]
+    for k, v in palette.items():
+        if isinstance(v, str) and v.startswith("#"):
+            hexval = v[1:].lower()
+            pfx = "rgba:" if len(hexval) == 8 else "rgb:"
+            lines.append(f'declare-option str {k} "{pfx}{hexval}"')
+        elif isinstance(v, str):
+            lines.append(f'declare-option str {k} "{v}"')
+
+    lines.append("")
+    # Default face from ui.background / ui.text, falling back to palette text/bg/fg/base
+    ui_bg = data.get("ui.background", {})
+    ui_text = data.get("ui.text", {})
+    def_fg, def_bg = "", ""
+    if isinstance(ui_text, dict):
+        def_fg = color_ref(palette, ui_text.get("fg", ""))
+    elif isinstance(ui_text, str):
+        def_fg = color_ref(palette, ui_text)
+    if isinstance(ui_bg, dict):
+        def_bg = color_ref(palette, ui_bg.get("bg", ""))
+    elif isinstance(ui_bg, str):
+        def_bg = color_ref(palette, ui_bg)
+    if not def_fg:
+        def_fg = color_ref(palette, "text") or color_ref(palette, "fg")
+    if not def_bg:
+        def_bg = color_ref(palette, "bg") or color_ref(palette, "base") or color_ref(palette, "bg0")
+    if def_fg or def_bg:
+        lines.append(f'set-face global Default "{def_fg},{def_bg}"')
+    lines.append("")
+
+    # collect explicit scope → (fg, bg)
+    explicit: dict[str, tuple[str, str]] = {}
+    for scope, val in data.items():
+        f = face(scope)
+        if not f:
+            continue
+        fg, bg, mods = spec(palette, val)
+        if fg or bg or mods:
+            explicit[f] = (fg, bg, mods)
+
+    # cascade: for every known ts face that has no explicit entry,
+    # inherit from the closest dot-separated parent scope that IS in the Helix theme.
+    def helio_parent(scope: str) -> str:
+        """keyword.control.conditional → keyword.control → keyword"""
+        parts = scope.rsplit(".", 1)
+        return parts[0] if len(parts) > 1 else ""
+
+    # Helix scope ← ts face mapping (reverse of face())
+    def face_to_scope(f: str) -> str:
+        return next((s for s, v in FALLBACK.items() if v == f), f.removeprefix("ts_").replace("_", "."))
+
+    expanded = dict(explicit)
+    for f in sorted(ALL_FACES):
+        if f in expanded:
+            continue
+        scope = face_to_scope(f)
+        # walk up scope hierarchy looking for an explicit parent
+        p = scope
+        while p:
+            p_face = None
+            if p in FALLBACK:
+                p_face = FALLBACK[p]
+            else:
+                p_face = "ts_" + p.replace(".", "_")
+            if p_face in explicit:
+                expanded[f] = explicit[p_face]
+                break
+            p = helio_parent(p)
+
+    seen = set()
+    for f in sorted(expanded):
+        if f in seen:
+            continue
+        seen.add(f)
+        fg, bg, mods = expanded[f]
+        mod_s = f"+{mods}" if mods else ""
+        if not fg and not bg and not mod_s:
+            continue
+        lines.append(f'set-face global {f} "{fg}{bg}{mod_s}"')
+
+    out = "\n".join(lines) + "\n"
+    if len(sys.argv) > 2:
+        Path(sys.argv[2]).write_text(out)
+    else:
+        sys.stdout.write(out)
+
+if __name__ == "__main__":
+    main()

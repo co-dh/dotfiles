@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Interactively preview and switch Kakoune tree-sitter themes via fzf.
+# Usage: kak-themes [pid|session]
+set -euo pipefail
+
+COLORS_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/kak/colors"
+
+if [ $# -gt 0 ]; then
+    SESSION="$1"
+elif [ -n "${kak_session:-}" ]; then
+    SESSION="$kak_session"
+else
+    # find the most recent kakoune session
+    SESSION=$(ls -t /run/user/"${UID:-1000}"/kakoune/* 2>/dev/null | head -1 | xargs basename 2>/dev/null || true)
+    if [ -z "$SESSION" ]; then
+        echo "No kakoune session found. Pass pid as argument." >&2
+        exit 1
+    fi
+fi
+
+# verify the session is reachable
+if ! printf '' | kak -p "$SESSION" 2>/dev/null; then
+    echo "Session $SESSION not reachable. Pass a valid pid." >&2
+    exit 1
+fi
+
+theme=$(ls "$COLORS_DIR"/*.kak | xargs -I{} basename {} .kak | sort | fzf \
+    --prompt='theme> ' \
+    --preview="printf 'colorscheme {}' | kak -p $SESSION >/dev/null 2>&1; bat --color=always --style=grid $COLORS_DIR/{}.kak 2>/dev/null || head -40 $COLORS_DIR/{}.kak" \
+    --preview-window=right:60%)
+
+# apply final selection on enter
+if [ -n "$theme" ]; then
+    printf 'colorscheme %s\n' "$theme" | kak -p "$SESSION"
+fi
