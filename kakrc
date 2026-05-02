@@ -15,7 +15,7 @@ map global normal f <c-s>f
 map global normal v <a-i>
 
 map global normal <c-w> <a-i>w
-set global fzf_preview_tmux_height 50
+#set global fzf_preview_tmux_height 50
 
 # When I don't have ErgoDox
 #map global normal h m
@@ -34,6 +34,13 @@ def -override pwd 'echo %sh{pwd}'
         ##echo "colorscheme solarized-light"
     #fi
 #}
+
+# --- tree-sitter ---
+eval %sh{ kak-tree-sitter -dks --init $kak_session }
+colorscheme catppuccin_mocha
+define-command -override tree-sitter-user-after-highlighter %{
+  add-highlighter -override buffer/show-matching show-matching
+}
 
 #addhl global/ column 120 Error
 
@@ -170,10 +177,7 @@ hook global WinSetOption filetype=rust %{
 
 def -override -docstring 'grep in current folder' -params 1.. \
   fzf-grep %{eval %sh{
-      set -ex
-      #FILE=$(rg --color always -n "$@" | fzf-tmux --exit-0 --exact --no-sort --ansi --delimiter=: --layout=reverse --preview="highlight -O ansi --force {1} | tail -n +{2}")
-      #FILE=$(rg --color always -n "$@" | fzf-tmux --exit-0 --exact --no-sort --ansi --delimiter=: --layout=reverse --preview="cat {1} | tail -n +{2} ")
-      FILE=$(rg -n "$@" | fzf-tmux --exit-0 --exact --no-sort --ansi --delimiter=: --layout=reverse )
+      FILE=$(rg -n "$@" . | fzf-tmux --exit-0 --exact --no-sort --ansi --delimiter=: --layout=reverse)
       if [ -n "$FILE" ]; then
         echo "$(echo "edit -existing ${FILE}"| cut -d: -f 1,2 | tr : " ")"
       fi
@@ -230,5 +234,5 @@ def -override -docstring 'digraph for unicode' \
         echo "$(echo ${UNICODE})"
       fi
 }}
-eval %sh{kak-lsp}
-lsp-enable
+#eval %sh{kak-lsp}
+#lsp-enable
