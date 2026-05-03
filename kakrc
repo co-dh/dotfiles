@@ -110,7 +110,7 @@ def  -override -params 0..1 -docstring 'invoke fzf to open a file. If any argume
       fi
       TMPF=$(mktemp /tmp/kak-fzf-prev-XXXXXX)
       trap 'rm -f $TMPF; PREV=$(cat $TMPF 2>/dev/null || true); if [ -n "$PREV" ]; then echo "try %%{ delete-buffer %%{$PREV} }" | kak -p $kak_session >/dev/null 2>&1; fi' EXIT
-      FILE=$(find $FROM -type f| fzf-tmux --reverse --exact --preview-window 80% --preview="
+      FILE=$(find $FROM -type f| SHELL=/bin/bash fzf-tmux --reverse --exact --preview-window 80% --preview="
           PREV=\$(cat $TMPF 2>/dev/null || true)
           if [ -n \"\$PREV\" ] && [ \"\$PREV\" != {} ]; then
               echo \"try %%{ delete-buffer %%{\$PREV} }\" | kak -p $kak_session >/dev/null 2>&1
