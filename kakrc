@@ -116,13 +116,13 @@ PREV=$(cat "$1" 2>/dev/null || true)
 if [ -n "$PREV" ] && [ "$PREV" != "$2" ]; then
     echo "try %%{ delete-buffer %%{$PREV} }" | kak -p "$3" >/dev/null 2>&1
 fi
-echo "edit %%{$2}" | kak -p "$3" >/dev/null 2>&1
+echo "evaluate-commands -client $4 edit %%{$2}" | kak -p "$3" >/dev/null 2>&1
 echo "$2" > "$1"
 bat --color=always --style=plain "$2" 2>/dev/null || head -40 "$2"
 ENDOFSCRIPT
       chmod +x "$PREVIEW_SH"
       trap 'rm -f "$PREVIEW_SH" "$TMPF"; PREV=$(cat "$TMPF" 2>/dev/null || true); if [ -n "$PREV" ]; then echo "try %%{ delete-buffer %%{$PREV} }" | kak -p $kak_session >/dev/null 2>&1; fi' EXIT
-      FILE=$(find $FROM -type f| fzf-tmux --reverse --exact --preview-window 80% --preview="$PREVIEW_SH $TMPF {} $kak_session")
+      FILE=$(find $FROM -type f| fzf-tmux --reverse --exact --preview-window 80% --preview="$PREVIEW_SH $TMPF {} $kak_session $kak_client")
       if [ -n "$FILE" ]; then
         printf 'edit %%{%s}' "${FILE}"
       fi
