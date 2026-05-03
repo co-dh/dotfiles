@@ -108,7 +108,17 @@ def  -override -params 0..1 -docstring 'invoke fzf to open a file. If any argume
       else
           FROM=.
       fi
-      FILE=$(find $FROM -type f| fzf-tmux --reverse --exact --preview-window 80% --preview='less {} ')
+      TMPF=$(mktemp /tmp/kak-fzf-prev-XXXXXX)
+      trap 'rm -f $TMPF; PREV=$(cat $TMPF 2>/dev/null || true); if [ -n "$PREV" ]; then echo "try %%{ delete-buffer %%{$PREV} }" | kak -p $kak_session >/dev/null 2>&1; fi' EXIT
+      FILE=$(find $FROM -type f| fzf-tmux --reverse --exact --preview-window 80% --preview="
+          PREV=\$(cat $TMPF 2>/dev/null || true)
+          if [ -n \"\$PREV\" ] && [ \"\$PREV\" != {} ]; then
+              echo \"try %%{ delete-buffer %%{\$PREV} }\" | kak -p $kak_session >/dev/null 2>&1
+          fi
+          echo \"edit %%{{}}\" | kak -p $kak_session >/dev/null 2>&1
+          echo {} > $TMPF
+          bat --color=always --style=plain {} 2>/dev/null || head -40 {}
+      ")
       if [ -n "$FILE" ]; then
         printf 'edit %%{%s}' "${FILE}"
       fi
@@ -234,5 +244,19 @@ def -override -docstring 'digraph for unicode' \
         echo "$(echo ${UNICODE})"
       fi
 }}
-#eval %sh{kak-lsp}
-#lsp-enable
+# --- LSP ---
+eval %sh{kak-lsp}
+lsp-enable
+
+# symbol browsing (kak-lsp provides the 'lsp' user-mode)
+map global normal <c-s> ':lsp-document-symbol<ret>'
+map global normal <c-p> ':lsp-workspace-symbol<ret>'
+
+map -docstring 'lsp' global user s ':enter-user-mode lsp<ret>'
+map -docstring 'document symbols'  global lsp s ':lsp-document-symbol<ret>'
+map -docstring 'workspace symbols' global lsp S ':lsp-workspace-symbol<ret>'
+map -docstring 'definition'        global lsp d ':lsp-definition<ret>'
+map -docstring 'references'        global lsp r ':lsp-references<ret>'
+map -docstring 'hover'             global lsp h ':lsp-hover<ret>'
+map -docstring 'rename'            global lsp n ':lsp-rename<ret>'
+map -docstring 'format'            global lsp f ':lsp-formatting<ret>'
