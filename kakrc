@@ -109,16 +109,20 @@ def  -override -params 0..1 -docstring 'invoke fzf to open a file. If any argume
           FROM=.
       fi
       TMPF=$(mktemp /tmp/kak-fzf-prev-XXXXXX)
-      trap 'rm -f $TMPF; PREV=$(cat $TMPF 2>/dev/null || true); if [ -n "$PREV" ]; then echo "try %%{ delete-buffer %%{$PREV} }" | kak -p $kak_session >/dev/null 2>&1; fi' EXIT
-      FILE=$(find $FROM -type f| fzf-tmux --reverse --exact --preview-window 80% --preview="
-          set PREV (cat $TMPF 2>/dev/null; or true)
-          if test -n \"\$PREV\" -a \"\$PREV\" != \"{}\"
-              echo \"try %%{ delete-buffer %%{\$PREV} }\" | kak -p $kak_session >/dev/null 2>&1
-          end
-          echo \"edit %%{{}}\" | kak -p $kak_session >/dev/null 2>&1
-          echo \"{}\" > $TMPF
-          bat --color=always --style=plain \"{}\" 2>/dev/null; or head -40 \"{}\"
-      ")
+      PREVIEW_SH=$(mktemp /tmp/kak-fzf-preview-XXXXXX.sh)
+      cat > "$PREVIEW_SH" << 'ENDOFSCRIPT'
+#!/bin/bash
+PREV=$(cat "$1" 2>/dev/null || true)
+if [ -n "$PREV" ] && [ "$PREV" != "$2" ]; then
+    echo "try %%{ delete-buffer %%{$PREV} }" | kak -p "$3" >/dev/null 2>&1
+fi
+echo "edit %%{$2}" | kak -p "$3" >/dev/null 2>&1
+echo "$2" > "$1"
+bat --color=always --style=plain "$2" 2>/dev/null || head -40 "$2"
+ENDOFSCRIPT
+      chmod +x "$PREVIEW_SH"
+      trap 'rm -f "$PREVIEW_SH" "$TMPF"; PREV=$(cat "$TMPF" 2>/dev/null || true); if [ -n "$PREV" ]; then echo "try %%{ delete-buffer %%{$PREV} }" | kak -p $kak_session >/dev/null 2>&1; fi' EXIT
+      FILE=$(find $FROM -type f| fzf-tmux --reverse --exact --preview-window 80% --preview="$PREVIEW_SH $TMPF {} $kak_session")
       if [ -n "$FILE" ]; then
         printf 'edit %%{%s}' "${FILE}"
       fi
