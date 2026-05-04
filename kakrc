@@ -71,6 +71,7 @@ map -docstring 'write buffer'          global user w :<space>w<ret>
 map -docstring 'grep'                  global user / :fzf-grep<space>
 #map -docstring 'grep buffer'           global user G :grep<space>-wg<space><c-r>%<space><c-r>.<ret>
 map -docstring 'plan grep word. '      global user G <a-i>w:grep<space>-w<space><c-r>.<ret>
+map -docstring 'workspace symbols'     global user S :fzf-ws-symbols<ret>
 map -docstring 'grep word'             global user * :fzf-grep<space>-w<space><c-r>.<ret>
 map -docstring 'quit'                  global user q :q<ret>
 map -docstring 'repl-ver'              global user v :tmux-repl-vertical<ret>
@@ -116,10 +117,59 @@ def  -override -params 0..1 -docstring 'invoke fzf to open a file. If any argume
       fi
 } }
 
+def -override -docstring 'fzf document symbols' fzf-doc-symbols %{
+    hook -group fzf-ds global WinSetOption filetype=lsp-document-symbol %{
+        evaluate-commands %sh{
+            if [ "$kak_bufname" != "*goto*" ]; then exit 0; fi
+            printf 'remove-hooks global fzf-ds\n'
+        }
+        write -force /tmp/kak-fzf-ds
+        evaluate-commands %sh{
+            SEL=$(cat /tmp/kak-fzf-ds | fzf-tmux --reverse --exact --ansi)
+            if [ -n "$SEL" ]; then
+                LINE=$(echo "$SEL" | grep -oP '\d+(?=\s*:\d)' | head -1)
+                COL=$(echo "$SEL" | grep -oP ':\K\d+(?=[:\s]|$)' | head -1)
+                if [ -n "$LINE" ]; then
+                    FILE="${kak_opt_lsp_buffile:-$kak_buffile}"
+                    printf 'edit -existing %%{%s} %s %s' "$FILE" "$LINE" "$COL"
+                fi
+            fi
+            rm -f /tmp/kak-fzf-ds
+        }
+    }
+    lsp-document-symbol
+}
+
+def -override -docstring 'fzf workspace symbols' fzf-ws-symbols %{
+    remove-hooks global fzf-ws
+    prompt 'ws symbol: ' %{
+        hook -group fzf-ws -once global WinSetOption filetype=lsp-goto %{
+            evaluate-commands %sh{
+                if [ "$kak_bufname" != "*symbols*" ]; then exit 0; fi
+            }
+            write -force /tmp/kak-fzf-ws
+            evaluate-commands %sh{
+                SEL=$(cat /tmp/kak-fzf-ws | fzf-tmux --reverse --exact --ansi)
+                if [ -n "$SEL" ]; then
+                    PAIR=$(echo "$SEL" | grep -oP '\S+:\d+:\d+' | tail -1)
+                    FILE=$(echo "$PAIR" | cut -d: -f1)
+                    LINE=$(echo "$PAIR" | cut -d: -f2)
+                    COL=$(echo "$PAIR" | cut -d: -f3)
+                    if [ -n "$FILE" ] && [ -n "$LINE" ]; then
+                        printf 'edit %%{%s} %s %s' "$FILE" "$LINE" "$COL"
+                    fi
+                fi
+                rm -f /tmp/kak-fzf-ws
+            }
+        }
+        lsp-workspace-symbol %val{text}
+    }
+}
+
 define-command -override gitroot %{cd %sh(git rev-parse --show-toplevel); pwd}
 declare-user-mode git
 
-map -docstring 'git'        global user g :enter-user-mode<space>-lock<space>git<ret>
+map -docstring 'document symbols'  global user g :fzf-doc-symbols<ret>
 map -docstring 'add'        global git a :git<space>add<space>
 map -docstring 'blame'      global git b :git<space>blame<ret>
 map -docstring 'hide-blame' global git B :git<space>hide-blame<ret>
